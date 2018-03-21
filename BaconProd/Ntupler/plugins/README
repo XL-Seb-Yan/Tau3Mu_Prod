@@ -1,0 +1,8 @@
+Generate dictionary for vector<bitset<256> >:
+Files:
+1. stdlib.h
+2. LinkDef.h
+
+Generation:
+rootcint -f aDict.cxx  -c  stdlib.h LinkDef.h
+g++ -o libMylib.so aDict.cxx `root-config --cflags --libs` -shared -fPIC
