@@ -89,6 +89,7 @@ void FillA(std::vector<reco::Muon> muonsel,
            std::vector<float> *vf_dOF,
            std::vector<float> *vf_nC,
            std::vector<float> *vf_Prob,
+	   std::vector<int>   *category,
 	   const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
            const std::vector<TriggerRecord> &triggerRecords,
            const trigger::TriggerEvent &triggerEvent)
@@ -239,6 +240,9 @@ void FillA(std::vector<reco::Muon> muonsel,
 	vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
 	vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
 	//std::cout<<"end of processing"<<std::endl;
+
+	// Category info
+	category->push_back(1);
       }
     }
   }
@@ -290,6 +294,7 @@ void FillB(std::vector<reco::Muon> muonsel,
            std::vector<float> *vf_dOF,
            std::vector<float> *vf_nC,
            std::vector<float> *vf_Prob,
+	   std::vector<int>   *category,
 	   const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
            const std::vector<TriggerRecord> &triggerRecords,
            const trigger::TriggerEvent &triggerEvent)
@@ -494,7 +499,10 @@ void FillB(std::vector<reco::Muon> muonsel,
 	vf_dOF->push_back(fv.degreesOfFreedom());
 	vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
 	vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
-	//std::cout<<"end of processing"<<std::endl;
+	//std::cout<<"end of processing"<<std::end;
+
+	// Category info
+	category->push_back(2);
       }
     }
   }
@@ -544,6 +552,7 @@ void FillerMuon::fill(TClonesArray *array,
 		      std::vector<float> *vf_dOF,
 		      std::vector<float> *vf_nC,
 		      std::vector<float> *vf_Prob,
+		      std::vector<int>   *category,
                       const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
 		      const std::vector<TriggerRecord> &triggerRecords,
 		      const trigger::TriggerEvent &triggerEvent)
@@ -637,17 +646,17 @@ void FillerMuon::fill(TClonesArray *array,
     FillA(muonsel, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, iEvent, iSetup, pv, triggerRecords, triggerEvent);
     FillB(muonsel, trksel, pfCandCol, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, iEvent, iSetup, pv, triggerRecords, triggerEvent);
   }
   if(muonsel.size() == 2){
     FillB(muonsel, trksel, pfCandCol, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, iEvent, iSetup, pv, triggerRecords, triggerEvent);
   }
    // End of events processing //
 }

@@ -84,11 +84,11 @@ for line in hlt_file.readlines():
                                     'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_3.root',
                                     'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_4.root',
                                     'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_5.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_6.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_7.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_8.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_9.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_10.root',
+                                    #'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_6.root',
+                                    #'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_7.root',
+                                    #'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_8.root',
+                                    #'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_9.root',
+                                    #'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_10.root',
 #/store/mc/RunIIFall15DR76/DsToTauNeutrinoToMuMuMuNeutrino_TuneCUEP8M1_13TeV-pythia8-evtGen/AODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/02C34028-26A6-E511-9237-00259075D708.root'
                                   #fileNames = cms.untracked.vstring('/store/user/arapyan/mc/VBFHpmToWlnuZll_M800_13TeV-madgraph-pythia8/RunIIFall15DR76-PU25nsData2015v1_76X_mcRun2_asymptotic_v12/AODSIM/AOD_96001.root'
                                   )

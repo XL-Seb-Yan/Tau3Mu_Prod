@@ -83,6 +83,7 @@ namespace baconhep
 		std::vector<float>               *vf_dOF,
 		std::vector<float>               *vf_nC,
 		std::vector<float>               *vf_Prob,
+		std::vector<int>                 *category,
                 const edm::Event		 &iEvent,	   // event info
 	        const edm::EventSetup		 &iSetup,	   // event setup info
 	        const reco::Vertex		 &pv,	           // event primary vertex

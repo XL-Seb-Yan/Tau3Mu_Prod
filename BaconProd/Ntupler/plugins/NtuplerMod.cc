@@ -190,6 +190,7 @@ NtuplerMod::NtuplerMod(const edm::ParameterSet &iConfig):
       fVfDof          = new std::vector<float>(); assert(fVfDof);
       fVfNc           = new std::vector<float>(); assert(fVfNc);
       fVfProb         = new std::vector<float>(); assert(fVfProb);
+      fCategory       = new std::vector<int>();   assert(fCategory);
       fFillerMuon        = new baconhep::FillerMuon(cfg,consumesCollector());       assert(fFillerMuon);
     }
   }  
@@ -284,6 +285,7 @@ NtuplerMod::~NtuplerMod()
   delete fVfDof;
   delete fVfNc;
   delete fVfProb;
+  delete fCategory;
   
   if(fIsActiveJet) {
     delete fFillerJet[0];
@@ -354,6 +356,7 @@ void NtuplerMod::beginJob()
     fEventTree->Branch("VfDof",   fVfDof);
     fEventTree->Branch("VfNc",   fVfNc);
     fEventTree->Branch("VfProb",   fVfProb);
+    fEventTree->Branch("Category",   fCategory);
   }
   if(fIsActivePhoton) { fEventTree->Branch("Photon",   &fPhotonArr); }
   if(fIsActivePV)     { fEventTree->Branch("PV",       &fPVArr); }
@@ -482,10 +485,11 @@ void NtuplerMod::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     fVfDof->clear();
     fVfNc->clear();
     fVfProb->clear();
+    fCategory->clear();
     fFillerMuon->fill(fMuonArr, fMuonPt, fMuonEta, fMuonPhi, fMuonPtErr, fMuonStaPt, fMuonStaEta, fMuonStaPhi, fMuonPfPt, fMuonPfEta, fMuonPfPhi, fMuonQ, fMuonTrkIso, fMuonEcalIso, fMuonHcalIso, fMuonChHadIso,
 		      fMuonGammaIso, fMuonNeuHadIso, fMuonPuIso, fMuonD0, fMuonDz, fMuonSip3d, fMuonTkNchi2, fMuonMuNchi2, fMuonTrkKink,
 		      fMuonGlbKink, fMuonNValidHits, fMuonTypeBits, fMuonSelectorBits, fMuonPogIDBits, fMuonNTkHits, fMuonNPixHits, fMuonNTkLayers, fMuonNPixLayers,
-		      fMuonNMatchStn, fMuonTrkID, fMuonHltMatchBits, fVfTc, fVfDof, fVfNc, fVfProb, iEvent, iSetup, *pv, fTrigger->fRecords, *hTrgEvt);
+		      fMuonNMatchStn, fMuonTrkID, fMuonHltMatchBits, fVfTc, fVfDof, fVfNc, fVfProb, fCategory, iEvent, iSetup, *pv, fTrigger->fRecords, *hTrgEvt);
   }
 
   if(fIsActivePhoton) {
