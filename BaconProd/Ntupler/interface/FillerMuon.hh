@@ -42,8 +42,7 @@ namespace baconhep
     FillerMuon(const edm::ParameterSet &iConfig,edm::ConsumesCollector && iC);
       ~FillerMuon();
       
-      void fill(TClonesArray			 *array,	   // output array to be filled
-		std::vector<float>               *muon_pt,
+      void fill(std::vector<float>               *muon_pt,
 		std::vector<float>               *muon_eta,
 		std::vector<float>               *muon_phi,
 		std::vector<float>               *muon_ptErr,

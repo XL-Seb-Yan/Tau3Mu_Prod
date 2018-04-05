@@ -82,7 +82,7 @@ NtuplerMod::NtuplerMod(const edm::ParameterSet &iConfig):
   fGenEvtInfo        (0),
   fGenParArr         (0),
   fEleArr            (0),
-  fMuonArr           (0),
+  //fMuonArr           (0),
   fJetArr            (0),
   fPhotonArr         (0),
   fPVArr             (0),
@@ -149,7 +149,7 @@ NtuplerMod::NtuplerMod(const edm::ParameterSet &iConfig):
     edm::ParameterSet cfg(iConfig.getUntrackedParameter<edm::ParameterSet>("Muon"));
     fIsActiveMuon = cfg.getUntrackedParameter<bool>("isActive");
     if(fIsActiveMuon) {
-      fMuonArr    = new TClonesArray("baconhep::TMuon",5000); assert(fMuonArr);
+      //fMuonArr    = new TClonesArray("baconhep::TMuon",5000); assert(fMuonArr);
       fMuonPt     = new std::vector<float>(); assert(fMuonPt);
       fMuonEta    = new std::vector<float>(); assert(fMuonEta);
       fMuonPhi    = new std::vector<float>(); assert(fMuonPhi);
@@ -241,7 +241,7 @@ NtuplerMod::~NtuplerMod()
   delete fGenEvtInfo;
   delete fGenParArr;
   delete fEleArr;
-  delete fMuonArr;
+  //delete fMuonArr;
   delete fPhotonArr;
   delete fPVArr;
   delete fPFParArr;
@@ -315,7 +315,7 @@ void NtuplerMod::beginJob()
   }
   if(fIsActiveEle)    { fEventTree->Branch("Electron", &fEleArr); }
   if(fIsActiveMuon)   {
-    fEventTree->Branch("Muon",     &fMuonArr);
+    //fEventTree->Branch("Muon",     &fMuonArr);
     fEventTree->Branch("MuonPt",   fMuonPt);
     fEventTree->Branch("MuonEta",   fMuonEta);
     fEventTree->Branch("MuonPhi",   fMuonPhi);
@@ -444,7 +444,7 @@ void NtuplerMod::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   }
 
   if(fIsActiveMuon) {
-    fMuonArr->Clear();
+    //fMuonArr->Clear();
     fMuonPt->clear();
     fMuonEta->clear();
     fMuonPhi->clear();
@@ -486,7 +486,7 @@ void NtuplerMod::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     fVfNc->clear();
     fVfProb->clear();
     fCategory->clear();
-    fFillerMuon->fill(fMuonArr, fMuonPt, fMuonEta, fMuonPhi, fMuonPtErr, fMuonStaPt, fMuonStaEta, fMuonStaPhi, fMuonPfPt, fMuonPfEta, fMuonPfPhi, fMuonQ, fMuonTrkIso, fMuonEcalIso, fMuonHcalIso, fMuonChHadIso,
+    fFillerMuon->fill(fMuonPt, fMuonEta, fMuonPhi, fMuonPtErr, fMuonStaPt, fMuonStaEta, fMuonStaPhi, fMuonPfPt, fMuonPfEta, fMuonPfPhi, fMuonQ, fMuonTrkIso, fMuonEcalIso, fMuonHcalIso, fMuonChHadIso,
 		      fMuonGammaIso, fMuonNeuHadIso, fMuonPuIso, fMuonD0, fMuonDz, fMuonSip3d, fMuonTkNchi2, fMuonMuNchi2, fMuonTrkKink,
 		      fMuonGlbKink, fMuonNValidHits, fMuonTypeBits, fMuonSelectorBits, fMuonPogIDBits, fMuonNTkHits, fMuonNPixHits, fMuonNTkLayers, fMuonNPixLayers,
 		      fMuonNMatchStn, fMuonTrkID, fMuonHltMatchBits, fVfTc, fVfDof, fVfNc, fVfProb, fCategory, iEvent, iSetup, *pv, fTrigger->fRecords, *hTrgEvt);

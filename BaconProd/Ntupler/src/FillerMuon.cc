@@ -511,8 +511,7 @@ void FillB(std::vector<reco::Muon> muonsel,
 
 // Main Progame ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //--------------------------------------------------------------------------------------------------
-void FillerMuon::fill(TClonesArray *array,
-		      std::vector<float> *muon_pt,
+void FillerMuon::fill(std::vector<float> *muon_pt,
 		      std::vector<float> *muon_eta,
 		      std::vector<float> *muon_phi,
 		      std::vector<float> *muon_ptErr,
@@ -557,7 +556,6 @@ void FillerMuon::fill(TClonesArray *array,
 		      const std::vector<TriggerRecord> &triggerRecords,
 		      const trigger::TriggerEvent &triggerEvent)
 {
-  assert(array);
 
   // Load trigger menu
   const baconhep::TTrigger triggerMenu("/afs/cern.ch/work/x/xuyan/work4/CMSSW_8_0_27/src/BaconAna/DataFormats/data/HLT_50nsGRun");

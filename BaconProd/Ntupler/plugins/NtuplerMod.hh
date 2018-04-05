@@ -119,7 +119,7 @@ class NtuplerMod : public edm::EDAnalyzer {
     baconhep::TGenEventInfo *fGenEvtInfo;
     TClonesArray            *fGenParArr;
     TClonesArray	    *fEleArr;
-    TClonesArray	    *fMuonArr;
+  //TClonesArray	    *fMuonArr;
     TClonesArray	    **fJetArr;
     TClonesArray	    *fPhotonArr;
     TClonesArray	    *fPVArr;
