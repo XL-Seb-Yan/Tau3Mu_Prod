@@ -158,13 +158,13 @@ process.ntupler = cms.EDAnalyzer('NtuplerMod',
                                  
                                  Muon = cms.untracked.PSet(
     isActive      = cms.untracked.bool(True),
-    minPt         = cms.untracked.double(2),
+    minPt         = cms.untracked.double(3),
     edmName       = cms.untracked.string('muons'),
     edmPFCandName = cms.untracked.string('particleFlow'),
     
     # save general tracker tracks in our muon collection (used in tag-and-probe for muons)
     doSaveTracks = cms.untracked.bool(False),
-    minTrackPt   = cms.untracked.double(2),
+    minTrackPt   = cms.untracked.double(3),
     edmTrackName = cms.untracked.string('generalTracks')    
     ),
                                      

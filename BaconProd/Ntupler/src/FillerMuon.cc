@@ -113,6 +113,30 @@ void FillA(std::vector<reco::Muon> muonsel,
 	int Ssign = m[0].muonBestTrack()->charge()+m[1].muonBestTrack()->charge()+m[2].muonBestTrack()->charge();
 	if (Ssign != -1 && Ssign != 1) continue;
 
+	// Mass cuts
+	TLorentzVector temp1, temp2, temp3;
+	temp1.SetPtEtaPhiM(m[0].muonBestTrack()->pt(),m[0].muonBestTrack()->eta(),m[0].muonBestTrack()->phi(),0.105658369);
+	temp2.SetPtEtaPhiM(m[1].muonBestTrack()->pt(),m[1].muonBestTrack()->eta(),m[1].muonBestTrack()->phi(),0.105658369);
+	temp3.SetPtEtaPhiM(m[2].muonBestTrack()->pt(),m[2].muonBestTrack()->eta(),m[2].muonBestTrack()->phi(),0.105658369);
+	if((m[0].muonBestTrack()->charge() * m[1].muonBestTrack()->charge()) < 0){
+	  double mass_temp = (temp1+temp2).M();
+	  if(mass_temp < 0.45) continue;
+	  if(abs(mass_temp - 1.02) < 0.06) continue;
+	  if(abs(mass_temp - 0.78) < 0.06) continue;
+	}
+	if((m[0].muonBestTrack()->charge() * m[2].muonBestTrack()->charge()) < 0){
+	  double mass_temp = (temp1+temp3).M();
+	  if(mass_temp < 0.45) continue;
+	  if(abs(mass_temp - 1.02) < 0.06) continue;
+	  if(abs(mass_temp - 0.78) < 0.06) continue;
+	}
+	if((m[1].muonBestTrack()->charge() * m[2].muonBestTrack()->charge()) < 0){
+	  double mass_temp = (temp2+temp3).M();
+	  if(mass_temp < 0.45) continue;
+	  if(abs(mass_temp - 1.02) < 0.06) continue;
+	  if(abs(mass_temp - 0.78) < 0.06) continue;
+	}
+
 	// Check if the triplet contains two global muon
 	/*
 	int NumGlobal = 0;
@@ -311,12 +335,22 @@ void FillB(std::vector<reco::Muon> muonsel,
     for(int j=i+1; j<(int)muonsel.size(); j++){
       m[1] = muonsel[j];
       if(m[1].innerTrack().isNull()) continue;
+      
+      if((m[0].muonBestTrack()->charge() * m[1].muonBestTrack()->charge()) > 0) continue; // Check if the di-muon is opposite-sign pair
+      TLorentzVector temp1,temp2;  // Mass cuts
+      temp1.SetPtEtaPhiM(m[0].muonBestTrack()->pt(),m[0].muonBestTrack()->eta(),m[0].muonBestTrack()->phi(),0.105658369);
+      temp2.SetPtEtaPhiM(m[1].muonBestTrack()->pt(),m[1].muonBestTrack()->eta(),m[1].muonBestTrack()->phi(),0.105658369);
+      double mass_temp = (temp1+temp2).M();
+      if(mass_temp < 0.45) continue;
+      if(abs(mass_temp - 1.02) < 0.06) continue;
+      if(abs(mass_temp - 0.78) < 0.06) continue;
       for(int k=0; k<(int)trksel.size(); k++){
 	t[0] = trksel[k];
 	  
 	// Check if the triplet has correct signs
 	int Ssign = m[0].muonBestTrack()->charge()+m[1].muonBestTrack()->charge()+t[0].charge();
 	if (Ssign != -1 && Ssign != 1) continue;
+	
 
 	// Check if the triplet contains two global muon
 	/*
