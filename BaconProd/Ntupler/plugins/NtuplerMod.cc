@@ -393,7 +393,7 @@ void NtuplerMod::setTriggers()
 //--------------------------------------------------------------------------------------------------
 void NtuplerMod::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-  fTotalEvents->Fill(1);
+  bool isFill = false;
   
   edm::Handle<edm::TriggerResults> hTrgRes;
   //iEvent.getByLabel(fHLTTag,hTrgRes);
@@ -486,7 +486,7 @@ void NtuplerMod::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     fVfNc->clear();
     fVfProb->clear();
     fCategory->clear();
-    fFillerMuon->fill(fMuonPt, fMuonEta, fMuonPhi, fMuonPtErr, fMuonStaPt, fMuonStaEta, fMuonStaPhi, fMuonPfPt, fMuonPfEta, fMuonPfPhi, fMuonQ, fMuonTrkIso, fMuonEcalIso, fMuonHcalIso, fMuonChHadIso,
+    isFill = fFillerMuon->fill(fMuonPt, fMuonEta, fMuonPhi, fMuonPtErr, fMuonStaPt, fMuonStaEta, fMuonStaPhi, fMuonPfPt, fMuonPfEta, fMuonPfPhi, fMuonQ, fMuonTrkIso, fMuonEcalIso, fMuonHcalIso, fMuonChHadIso,
 		      fMuonGammaIso, fMuonNeuHadIso, fMuonPuIso, fMuonD0, fMuonDz, fMuonSip3d, fMuonTkNchi2, fMuonMuNchi2, fMuonTrkKink,
 		      fMuonGlbKink, fMuonNValidHits, fMuonTypeBits, fMuonSelectorBits, fMuonPogIDBits, fMuonNTkHits, fMuonNPixHits, fMuonNTkLayers, fMuonNPixLayers,
 		      fMuonNMatchStn, fMuonTrkID, fMuonHltMatchBits, fVfTc, fVfDof, fVfNc, fVfProb, fCategory, iEvent, iSetup, *pv, fTrigger->fRecords, *hTrgEvt);
@@ -505,7 +505,10 @@ void NtuplerMod::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     fFillerJet[0]->fill(fJetArr[0], iEvent, iSetup, *pv, fTrigger->fRecords, *hTrgEvt);
   }
 
-  fEventTree->Fill();
+  if(isFill){
+    fEventTree->Fill();
+    fTotalEvents->Fill(1);
+  }
 }
 
 //--------------------------------------------------------------------------------------------------

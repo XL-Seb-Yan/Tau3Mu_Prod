@@ -545,7 +545,7 @@ void FillB(std::vector<reco::Muon> muonsel,
 
 // Main Progame ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //--------------------------------------------------------------------------------------------------
-void FillerMuon::fill(std::vector<float> *muon_pt,
+bool FillerMuon::fill(std::vector<float> *muon_pt,
 		      std::vector<float> *muon_eta,
 		      std::vector<float> *muon_phi,
 		      std::vector<float> *muon_ptErr,
@@ -703,4 +703,10 @@ void FillerMuon::fill(std::vector<float> *muon_pt,
 	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, iEvent, iSetup, pv, triggerRecords, triggerEvent);
   }
    // End of events processing //
+
+  // Check if no triplet is found in this event
+  if(category->size() == 0)
+    return false;
+  else
+    return true;
 }

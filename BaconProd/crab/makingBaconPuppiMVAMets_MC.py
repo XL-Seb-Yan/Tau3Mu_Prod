@@ -12,7 +12,7 @@ process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
 process.load('Configuration/EventContent/EventContent_cff')
 process.load('TrackingTools/TransientTrack/TransientTrackBuilder_cfi')
 
-process.MessageLogger.cerr.FwkReport.reportEvery = 1
+process.MessageLogger.cerr.FwkReport.reportEvery = 500
 process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_v3'
 
 #process.load("RecoTauTag/Configuration/RecoPFTauTag_cff")
@@ -84,11 +84,51 @@ for line in hlt_file.readlines():
                                     'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_3.root',
                                     'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_4.root',
                                     'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_5.root',
-                                    #'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_6.root',
-                                    #'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_7.root',
-                                    #'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_8.root',
-                                    #'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_9.root',
-                                    #'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_10.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_6.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_7.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_8.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_9.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_10.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_11.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_12.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_13.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_14.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_15.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_16.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_17.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_18.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_19.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_20.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_21.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_22.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_23.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_24.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_25.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_26.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_27.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_28.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_29.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_30.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_31.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_32.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_33.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_34.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_35.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_36.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_37.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_38.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_39.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_40.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_41.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_42.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_43.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_44.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_45.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_46.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_47.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_48.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_49.root',
+                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_50.root',
 #/store/mc/RunIIFall15DR76/DsToTauNeutrinoToMuMuMuNeutrino_TuneCUEP8M1_13TeV-pythia8-evtGen/AODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/02C34028-26A6-E511-9237-00259075D708.root'
                                   #fileNames = cms.untracked.vstring('/store/user/arapyan/mc/VBFHpmToWlnuZll_M800_13TeV-madgraph-pythia8/RunIIFall15DR76-PU25nsData2015v1_76X_mcRun2_asymptotic_v12/AODSIM/AOD_96001.root'
                                   )
