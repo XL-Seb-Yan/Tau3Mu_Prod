@@ -121,20 +121,17 @@ void FillA(std::vector<reco::Muon> muonsel,
 	if((m[0].muonBestTrack()->charge() * m[1].muonBestTrack()->charge()) < 0){
 	  double mass_temp = (temp1+temp2).M();
 	  if(mass_temp < 0.45) continue;
-	  if(abs(mass_temp - 1.02) < 0.06) continue;
-	  if(abs(mass_temp - 0.78) < 0.06) continue;
+	  if(abs(mass_temp - 0.782) < 0.06) continue;
 	}
 	if((m[0].muonBestTrack()->charge() * m[2].muonBestTrack()->charge()) < 0){
 	  double mass_temp = (temp1+temp3).M();
 	  if(mass_temp < 0.45) continue;
-	  if(abs(mass_temp - 1.02) < 0.06) continue;
-	  if(abs(mass_temp - 0.78) < 0.06) continue;
+	  if(abs(mass_temp - 0.782) < 0.06) continue;
 	}
 	if((m[1].muonBestTrack()->charge() * m[2].muonBestTrack()->charge()) < 0){
 	  double mass_temp = (temp2+temp3).M();
 	  if(mass_temp < 0.45) continue;
-	  if(abs(mass_temp - 1.02) < 0.06) continue;
-	  if(abs(mass_temp - 0.78) < 0.06) continue;
+	  if(abs(mass_temp - 0.782) < 0.06) continue;
 	}
 
 	// Check if the triplet contains two global muon
@@ -342,8 +339,7 @@ void FillB(std::vector<reco::Muon> muonsel,
       temp2.SetPtEtaPhiM(m[1].muonBestTrack()->pt(),m[1].muonBestTrack()->eta(),m[1].muonBestTrack()->phi(),0.105658369);
       double mass_temp = (temp1+temp2).M();
       if(mass_temp < 0.45) continue;
-      if(abs(mass_temp - 1.02) < 0.06) continue;
-      if(abs(mass_temp - 0.78) < 0.06) continue;
+      if(abs(mass_temp - 0.782) < 0.06) continue;
       for(int k=0; k<(int)trksel.size(); k++){
 	t[0] = trksel[k];
 	  
