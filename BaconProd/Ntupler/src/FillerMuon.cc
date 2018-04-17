@@ -673,7 +673,6 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
     // Push to trk array
     trksel.push_back(*itTrk);
   }
-  std::cout<<"muonsel size: "<<muonsel.size()<<" trksel size: "<<trksel.size()<<std::endl;
 
   // There are several possible compositions of the triplets and we will discuss this one by one //
   // If we have more than 3 muons in muonsel, we can form triplets contain: A. 3 muons, B. 2muons C. 1muon and D. 0muon //
