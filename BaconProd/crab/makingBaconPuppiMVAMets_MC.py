@@ -76,61 +76,19 @@ for line in hlt_file.readlines():
     hlt_path = line.split()[0]
     process.hltHighLevel.HLTPaths.extend(cms.untracked.vstring(hlt_path))
 
-    process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
+    process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
     process.source = cms.Source("PoolSource",
                                   fileNames = cms.untracked.vstring(
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_1.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_2.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_3.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_4.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_5.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_6.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_7.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_8.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_9.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_10.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_11.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_12.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_13.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_14.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_15.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_16.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_17.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_18.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_19.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_20.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_21.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_22.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_23.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_24.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_25.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_26.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_27.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_28.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_29.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_30.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_31.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_32.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_33.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_34.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_35.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_36.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_37.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_38.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_39.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_40.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_41.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_42.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_43.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_44.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_45.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_46.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_47.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_48.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_49.root',
-                                    'file:/eos/cms/store/user/wangjian/DsTau3Mu_PtFltr_Large/DsTau3Mu_RECO_50.root',
-#/store/mc/RunIIFall15DR76/DsToTauNeutrinoToMuMuMuNeutrino_TuneCUEP8M1_13TeV-pythia8-evtGen/AODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/02C34028-26A6-E511-9237-00259075D708.root'
-                                  #fileNames = cms.untracked.vstring('/store/user/arapyan/mc/VBFHpmToWlnuZll_M800_13TeV-madgraph-pythia8/RunIIFall15DR76-PU25nsData2015v1_76X_mcRun2_asymptotic_v12/AODSIM/AOD_96001.root'
+                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/045DCD5C-5CF7-E711-8838-02163E01341E.root'£¬
+                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/047B66C1-F2FE-E711-A7FA-008CFAC9405C.root',
+                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/062A73CA-D5FA-E711-BCAB-02163E01A714.root',
+                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0A1F8DF9-70FF-E711-A750-A4BF0112BE02.root',
+                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0A8250FE-DBFA-E711-B148-02163E01A675.root',
+                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0A94F324-9AF7-E711-9C56-02163E01A57E.root',
+                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0C091896-15FC-E711-B70D-02163E01353D.root',
+                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0C86EC76-EEFA-E711-9923-02163E011E03.root',
+                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0E55C9DC-EEFA-E711-8D8D-02163E01A2BD.root',
+                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0EB79F34-45FB-E711-B9DE-1CC1DE1CF1F6.root'
                                   )
                                 )
     process.source.inputCommands = cms.untracked.vstring("keep *",
@@ -204,7 +162,7 @@ process.ntupler = cms.EDAnalyzer('NtuplerMod',
     
     # save general tracker tracks in our muon collection (used in tag-and-probe for muons)
     doSaveTracks = cms.untracked.bool(False),
-    minTrackPt   = cms.untracked.double(3),
+    minTrackPt   = cms.untracked.double(1.5),
     edmTrackName = cms.untracked.string('generalTracks')    
     ),
                                      

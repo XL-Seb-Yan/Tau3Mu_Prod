@@ -36,6 +36,8 @@
 #include "DataFormats/VertexReco/interface/Vertex.h"
 
 // ROOT classes
+#include <TROOT.h>
+#include <TSystem.h>
 #include <TFile.h>
 #include <TH1D.h>
 #include <TTree.h>
@@ -43,6 +45,7 @@
 #include <TLorentzVector.h>
 #include <TMath.h>
 #include <vector>
+#include <bitset>
 #include <iostream>
 
 #ifdef __MAKECINT__
@@ -88,6 +91,7 @@ NtuplerMod::NtuplerMod(const edm::ParameterSet &iConfig):
   fPVArr             (0),
   fPFParArr          (0)
 {
+  gSystem->Load("/afs/cern.ch/work/x/xuyan/work4/CMSSW_8_0_27/src/BaconProd/Ntupler/plugins/libMylib.so");
   fHLTTag_token = consumes<edm::TriggerResults>(fHLTTag);
   fHLTObjTag_token = consumes<trigger::TriggerEvent>(fHLTObjTag);
   fPFCandName_token = consumes<reco::PFCandidateCollection>(fPFCandName);
@@ -298,7 +302,7 @@ NtuplerMod::~NtuplerMod()
 
 //--------------------------------------------------------------------------------------------------
 void NtuplerMod::beginJob()
-{  
+{
   //
   // Create output file, trees, and histograms
   //
@@ -351,7 +355,7 @@ void NtuplerMod::beginJob()
     fEventTree->Branch("MuonNPixLayers",   fMuonNPixLayers);
     fEventTree->Branch("MuonNMatchStn",   fMuonNMatchStn);
     fEventTree->Branch("MuonTrkID",   fMuonTrkID);
-    fEventTree->Branch("MuonHltMatchBits",   fMuonTrkID);
+    fEventTree->Branch("MuonHltMatchBits",   fMuonHltMatchBits);
     fEventTree->Branch("VfTc",   fVfTc);
     fEventTree->Branch("VfDof",   fVfDof);
     fEventTree->Branch("VfNc",   fVfNc);

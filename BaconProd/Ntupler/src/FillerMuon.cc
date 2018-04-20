@@ -94,6 +94,9 @@ void FillA(std::vector<reco::Muon> muonsel,
            const std::vector<TriggerRecord> &triggerRecords,
            const trigger::TriggerEvent &triggerEvent)
 {
+  // Load trigger menu
+  const baconhep::TTrigger triggerMenu("/afs/cern.ch/user/x/xuyan/public/TriggerMenu/HLT_50nsGRun");
+
   reco::Muon m[3];
   edm::ESHandle<TransientTrackBuilder> theB;
   iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
@@ -157,6 +160,26 @@ void FillA(std::vector<reco::Muon> muonsel,
 	TransientVertex fv = kvf.vertex(t_trks);
 	if(!fv.isValid()) continue;				      
 	//std::cout<<"*****Common vertex found*****"<<std::endl;
+
+	// Trigger objects
+	TriggerObjects hltMatchBits1 = TriggerTools::matchHLT(m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), triggerRecords, triggerEvent);
+	TriggerObjects hltMatchBits2 = TriggerTools::matchHLT(m[1].muonBestTrack()->eta(), m[1].muonBestTrack()->phi(), triggerRecords, triggerEvent);
+	TriggerObjects hltMatchBits3 = TriggerTools::matchHLT(m[2].muonBestTrack()->eta(), m[2].muonBestTrack()->phi(), triggerRecords, triggerEvent);
+	bool TriObj1 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits1) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits1) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits1) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits1));
+	bool TriObj2 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits2) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits2) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits2) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits2));
+	bool TriObj3 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits3) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits3) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits3) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits3));
+	    if(!TriObj1) continue;
+	    if(!TriObj2) continue;
+	    if(!TriObj3) continue;
 
 	// Store all possible triples
 	// Muon info
@@ -320,6 +343,9 @@ void FillB(std::vector<reco::Muon> muonsel,
            const std::vector<TriggerRecord> &triggerRecords,
            const trigger::TriggerEvent &triggerEvent)
 {
+  // Load trigger menu
+  const baconhep::TTrigger triggerMenu("/afs/cern.ch/user/x/xuyan/public/TriggerMenu/HLT_50nsGRun");
+  
   reco::Muon m[2];
   reco::Track t[1];
   edm::ESHandle<TransientTrackBuilder> theB;
@@ -369,6 +395,26 @@ void FillB(std::vector<reco::Muon> muonsel,
 	TransientVertex fv = kvf.vertex(t_trks);
 	if(!fv.isValid()) continue;				      
 	//std::cout<<"*****Common vertex found*****"<<std::endl;
+
+	// Trigger objects
+	TriggerObjects hltMatchBits1 = TriggerTools::matchHLT(m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), triggerRecords, triggerEvent);
+	TriggerObjects hltMatchBits2 = TriggerTools::matchHLT(m[1].muonBestTrack()->eta(), m[1].muonBestTrack()->phi(), triggerRecords, triggerEvent);
+	TriggerObjects hltMatchBits3 = TriggerTools::matchHLT(t[0].eta(), t[0].phi(), triggerRecords, triggerEvent);
+	bool TriObj1 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits1) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits1) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits1) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits1));
+	bool TriObj2 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits2) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits2) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits2) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits2));
+	bool TriObj3 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits3) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits3) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits3) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits3));
+	    if(!TriObj1) continue;
+	    if(!TriObj2) continue;
+	    if(!TriObj3) continue;
 
 	// Store all possible triples
 	// Muon info
@@ -586,9 +632,6 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
 		      const std::vector<TriggerRecord> &triggerRecords,
 		      const trigger::TriggerEvent &triggerEvent)
 {
-
-  // Load trigger menu
-  const baconhep::TTrigger triggerMenu("/afs/cern.ch/work/x/xuyan/work4/CMSSW_8_0_27/src/BaconAna/DataFormats/data/HLT_50nsGRun");
   
   // Get muon collection
   edm::Handle<reco::MuonCollection> hMuonProduct;
@@ -616,17 +659,6 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
   // Muon simple selecion
   std::vector<reco::Muon> muonsel;
   for(std::vector<reco::Muon>::const_iterator itMu=muonCol->begin(); itMu!=muonCol->end(); ++itMu){
-
-    // Trigger Muon
-    bool MuonTriObj = kFALSE;
-    TriggerObjects hltMatchBits;
-    hltMatchBits = TriggerTools::matchHLT(itMu->eta(), itMu->phi(), triggerRecords, triggerEvent);
-    // Check if this is correct!!!+++++++++++++++++++++++++++++++++++++
-    MuonTriObj = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits) ||
-                  triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits) ||
-    		  triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits) ||
-		  triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits));
-    if(!MuonTriObj) continue;
     
     // Kinematic cuts
     if(itMu->pt() < fMinPt) continue;
@@ -635,6 +667,17 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
     // Muon type
     if(!(itMu->type() & baconhep::EMuType::kGlobal || itMu->type() & baconhep::EMuType::kTracker))
       continue;
+
+    // Trigger Muon
+    /*
+    TriggerObjects hltMatchBits = TriggerTools::matchHLT(itMu->eta(), itMu->phi(), triggerRecords, triggerEvent);
+    // Check if this is correct!!!+++++++++++++++++++++++++++++++++++++
+    bool MuonTriObj  = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits) ||
+			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits));
+    if(!MuonTriObj) continue;
+    */
 
     // Push to muon array
     muonsel.push_back(*itMu);
@@ -655,20 +698,20 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
     }
     if(isMuon) continue;
 
-    // Trigger Track
-    bool TrkTriObj = kFALSE;
-    TriggerObjects hltMatchBits;
-    hltMatchBits = TriggerTools::matchHLT(itTrk->eta(), itTrk->phi(), triggerRecords, triggerEvent);
-    // Check if this is correct!!!+++++++++++++++++++++++++++++++++++++
-    TrkTriObj = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits) ||
-                  triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits) ||
-    		  triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits) ||
-		  triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits));
-    if(!TrkTriObj) continue;
-
     // Kinematic cuts
     if(itTrk->pt() < fTrackMinPt) continue;
     if(abs(itTrk->eta()) > 2.4) continue;
+
+     // Trigger Track
+    /*
+     TriggerObjects hltMatchBits = TriggerTools::matchHLT(itTrk->eta(), itTrk->phi(), triggerRecords, triggerEvent);
+    // Check if this is correct!!!+++++++++++++++++++++++++++++++++++++
+    bool TrkTriObj = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits) ||
+		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits) ||
+		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits) ||
+		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits));
+    if(!TrkTriObj) continue;
+    */
 
     // Push to trk array
     trksel.push_back(*itTrk);
