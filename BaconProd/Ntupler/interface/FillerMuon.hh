@@ -77,12 +77,14 @@ namespace baconhep
 		std::vector<unsigned int>        *muon_nPixLayers,
 		std::vector<unsigned int>        *muon_nMatchStn,
 		std::vector<int>                 *trkID,
-		std::vector<TriggerObjects>   *muon_hltMatchBits,
+		std::vector<TriggerObjects>      *muon_hltMatchBits,
 		std::vector<float>               *vf_tC,
 		std::vector<float>               *vf_dOF,
 		std::vector<float>               *vf_nC,
 		std::vector<float>               *vf_Prob,
 		std::vector<int>                 *category,
+		std::vector<int>                 *vf_Valid,
+		std::vector<float>               *invmass,   
                 const edm::Event		 &iEvent,	   // event info
 	        const edm::EventSetup		 &iSetup,	   // event setup info
 	        const reco::Vertex		 &pv,	           // event primary vertex

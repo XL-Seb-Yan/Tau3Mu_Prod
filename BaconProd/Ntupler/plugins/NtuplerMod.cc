@@ -195,6 +195,8 @@ NtuplerMod::NtuplerMod(const edm::ParameterSet &iConfig):
       fVfNc           = new std::vector<float>(); assert(fVfNc);
       fVfProb         = new std::vector<float>(); assert(fVfProb);
       fCategory       = new std::vector<int>();   assert(fCategory);
+      fVfValid        = new std::vector<int>();   assert(fVfValid);
+      fInvMass        = new std::vector<float>(); assert(fInvMass);
       fFillerMuon        = new baconhep::FillerMuon(cfg,consumesCollector());       assert(fFillerMuon);
     }
   }  
@@ -290,6 +292,8 @@ NtuplerMod::~NtuplerMod()
   delete fVfNc;
   delete fVfProb;
   delete fCategory;
+  delete fVfValid;
+  delete fInvMass;
   
   if(fIsActiveJet) {
     delete fFillerJet[0];
@@ -361,6 +365,8 @@ void NtuplerMod::beginJob()
     fEventTree->Branch("VfNc",   fVfNc);
     fEventTree->Branch("VfProb",   fVfProb);
     fEventTree->Branch("Category",   fCategory);
+    fEventTree->Branch("VfValid",  fVfValid);
+    fEventTree->Branch("InvMass",  fInvMass);
   }
   if(fIsActivePhoton) { fEventTree->Branch("Photon",   &fPhotonArr); }
   if(fIsActivePV)     { fEventTree->Branch("PV",       &fPVArr); }
@@ -490,10 +496,12 @@ void NtuplerMod::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     fVfNc->clear();
     fVfProb->clear();
     fCategory->clear();
+    fVfValid->clear();
+    fInvMass->clear();
     isFill = fFillerMuon->fill(fMuonPt, fMuonEta, fMuonPhi, fMuonPtErr, fMuonStaPt, fMuonStaEta, fMuonStaPhi, fMuonPfPt, fMuonPfEta, fMuonPfPhi, fMuonQ, fMuonTrkIso, fMuonEcalIso, fMuonHcalIso, fMuonChHadIso,
 		      fMuonGammaIso, fMuonNeuHadIso, fMuonPuIso, fMuonD0, fMuonDz, fMuonSip3d, fMuonTkNchi2, fMuonMuNchi2, fMuonTrkKink,
 		      fMuonGlbKink, fMuonNValidHits, fMuonTypeBits, fMuonSelectorBits, fMuonPogIDBits, fMuonNTkHits, fMuonNPixHits, fMuonNTkLayers, fMuonNPixLayers,
-		      fMuonNMatchStn, fMuonTrkID, fMuonHltMatchBits, fVfTc, fVfDof, fVfNc, fVfProb, fCategory, iEvent, iSetup, *pv, fTrigger->fRecords, *hTrgEvt);
+			       fMuonNMatchStn, fMuonTrkID, fMuonHltMatchBits, fVfTc, fVfDof, fVfNc, fVfProb, fCategory, fVfValid, fInvMass, iEvent, iSetup, *pv, fTrigger->fRecords, *hTrgEvt);
   }
 
   if(fIsActivePhoton) {

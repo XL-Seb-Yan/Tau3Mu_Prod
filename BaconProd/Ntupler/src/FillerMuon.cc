@@ -90,6 +90,8 @@ void FillA(std::vector<reco::Muon> muonsel,
            std::vector<float> *vf_nC,
            std::vector<float> *vf_Prob,
 	   std::vector<int>   *category,
+	   std::vector<int>   *vf_Valid,
+	   std::vector<float> *invmass,
 	   const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
            const std::vector<TriggerRecord> &triggerRecords,
            const trigger::TriggerEvent &triggerEvent)
@@ -111,40 +113,16 @@ void FillA(std::vector<reco::Muon> muonsel,
       for(int k=j+1; k<(int)muonsel.size(); k++){
 	m[2] = muonsel[k];
 	if(m[2].innerTrack().isNull()) continue;
-	  
-	// Check if the triplet has correct signs
-	int Ssign = m[0].muonBestTrack()->charge()+m[1].muonBestTrack()->charge()+m[2].muonBestTrack()->charge();
-	if (Ssign != -1 && Ssign != 1) continue;
 
-	// Mass cuts
-	TLorentzVector temp1, temp2, temp3;
-	temp1.SetPtEtaPhiM(m[0].muonBestTrack()->pt(),m[0].muonBestTrack()->eta(),m[0].muonBestTrack()->phi(),0.105658369);
-	temp2.SetPtEtaPhiM(m[1].muonBestTrack()->pt(),m[1].muonBestTrack()->eta(),m[1].muonBestTrack()->phi(),0.105658369);
-	temp3.SetPtEtaPhiM(m[2].muonBestTrack()->pt(),m[2].muonBestTrack()->eta(),m[2].muonBestTrack()->phi(),0.105658369);
-	if((m[0].muonBestTrack()->charge() * m[1].muonBestTrack()->charge()) < 0){
-	  double mass_temp = (temp1+temp2).M();
-	  if(mass_temp < 0.45) continue;
-	  if(abs(mass_temp - 0.782) < 0.02) continue;
-	}
-	if((m[0].muonBestTrack()->charge() * m[2].muonBestTrack()->charge()) < 0){
-	  double mass_temp = (temp1+temp3).M();
-	  if(mass_temp < 0.45) continue;
-	  if(abs(mass_temp - 0.782) < 0.02) continue;
-	}
-	if((m[1].muonBestTrack()->charge() * m[2].muonBestTrack()->charge()) < 0){
-	  double mass_temp = (temp2+temp3).M();
-	  if(mass_temp < 0.45) continue;
-	  if(abs(mass_temp - 0.782) < 0.02) continue;
-	}
-
-	// Check if the triplet contains two global muon
-	/*
-	int NumGlobal = 0;
-	if(m[0].type() & baconhep::EMuType::kGlobal) NumGlobal++;
-	if(m[1].type() & baconhep::EMuType::kGlobal) NumGlobal++;
-	if(m[2].type() & baconhep::EMuType::kGlobal) NumGlobal++;
-	if(NumGlobal < 2) continue;
-	*/
+	// Triplet mass region
+	TLorentzVector lv1, lv2, lv3;
+	lv1.SetPtEtaPhiM(m[0].muonBestTrack()->pt(), m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), 0.105658369);
+	lv2.SetPtEtaPhiM(m[1].muonBestTrack()->pt(), m[1].muonBestTrack()->eta(), m[1].muonBestTrack()->phi(), 0.105658369);
+	lv3.SetPtEtaPhiM(m[2].muonBestTrack()->pt(), m[2].muonBestTrack()->eta(), m[2].muonBestTrack()->phi(), 0.105658369);
+	float mass_cut = (lv1+lv2+lv3).M();
+	if(mass_cut > 2.4 || mass_cut < 1.4) continue;
+	invmass->push_back(mass_cut);
+	invmass->push_back(-99); //Take the empty space for normalization channel invmass
 
 	// Build tracks
 	std::vector<reco::TransientTrack> t_trks;
@@ -158,28 +136,21 @@ void FillA(std::vector<reco::Muon> muonsel,
 	// Vertex fit
 	KalmanVertexFitter kvf;
 	TransientVertex fv = kvf.vertex(t_trks);
-	if(!fv.isValid()) continue;				      
-	//std::cout<<"*****Common vertex found*****"<<std::endl;
-
-	// Trigger objects
-	TriggerObjects hltMatchBits1 = TriggerTools::matchHLT(m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), triggerRecords, triggerEvent);
-	TriggerObjects hltMatchBits2 = TriggerTools::matchHLT(m[1].muonBestTrack()->eta(), m[1].muonBestTrack()->phi(), triggerRecords, triggerEvent);
-	TriggerObjects hltMatchBits3 = TriggerTools::matchHLT(m[2].muonBestTrack()->eta(), m[2].muonBestTrack()->phi(), triggerRecords, triggerEvent);
-	bool TriObj1 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits1) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits1) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits1) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits1));
-	bool TriObj2 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits2) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits2) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits2) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits2));
-	bool TriObj3 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits3) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits3) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits3) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits3));
-	    if(!TriObj1) continue;
-	    if(!TriObj2) continue;
-	    if(!TriObj3) continue;
+	if(fv.isValid()){
+	  vf_Valid->push_back(1);
+	  vf_tC->push_back(fv.totalChiSquared());
+	  vf_dOF->push_back(fv.degreesOfFreedom());
+	  vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
+	  vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
+	}
+	else{
+	  vf_Valid->push_back(0);
+	  // Vertex Fitting info
+	  vf_tC->push_back(-99);
+	  vf_dOF->push_back(-99);
+	  vf_nC->push_back(-99);
+	  vf_Prob->push_back(-99);
+	}
 
 	// Store all possible triples
 	// Muon info
@@ -277,13 +248,6 @@ void FillA(std::vector<reco::Muon> muonsel,
 	  muon_trkID->push_back(trkid);
 	  muon_hltMatchBits->push_back(TriggerTools::matchHLT(m[i].eta(), m[i].phi(), triggerRecords, triggerEvent));
 	}
-	  
-	// Vertex Fitting info
-	vf_tC->push_back(fv.totalChiSquared());
-	vf_dOF->push_back(fv.degreesOfFreedom());
-	vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
-	vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
-	//std::cout<<"end of processing"<<std::endl;
 
 	// Category info
 	category->push_back(1);
@@ -339,6 +303,8 @@ void FillB(std::vector<reco::Muon> muonsel,
            std::vector<float> *vf_nC,
            std::vector<float> *vf_Prob,
 	   std::vector<int>   *category,
+	   std::vector<int>   *vf_Valid,
+	   std::vector<float> *invmass,
 	   const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
            const std::vector<TriggerRecord> &triggerRecords,
            const trigger::TriggerEvent &triggerEvent)
@@ -358,29 +324,24 @@ void FillB(std::vector<reco::Muon> muonsel,
     for(int j=i+1; j<(int)muonsel.size(); j++){
       m[1] = muonsel[j];
       if(m[1].innerTrack().isNull()) continue;
-      
-      if((m[0].muonBestTrack()->charge() * m[1].muonBestTrack()->charge()) > 0) continue; // Check if the di-muon is opposite-sign pair
-      TLorentzVector temp1,temp2;  // Mass cuts
-      temp1.SetPtEtaPhiM(m[0].muonBestTrack()->pt(),m[0].muonBestTrack()->eta(),m[0].muonBestTrack()->phi(),0.105658369);
-      temp2.SetPtEtaPhiM(m[1].muonBestTrack()->pt(),m[1].muonBestTrack()->eta(),m[1].muonBestTrack()->phi(),0.105658369);
-      double mass_temp = (temp1+temp2).M();
-      if(mass_temp < 0.45) continue;
-      if(abs(mass_temp - 0.782) < 0.02) continue;
       for(int k=0; k<(int)trksel.size(); k++){
 	t[0] = trksel[k];
-	  
-	// Check if the triplet has correct signs
-	int Ssign = m[0].muonBestTrack()->charge()+m[1].muonBestTrack()->charge()+t[0].charge();
-	if (Ssign != -1 && Ssign != 1) continue;
-	
 
-	// Check if the triplet contains two global muon
-	/*
-	int NumGlobal = 0;
-	if(m[0].type() & baconhep::EMuType::kGlobal) NumGlobal++;
-	if(m[1].type() & baconhep::EMuType::kGlobal) NumGlobal++;
-	if(NumGlobal < 2) continue;
-	*/
+	// Triplet mass region
+	TLorentzVector lv1, lv2, lv3;
+	lv1.SetPtEtaPhiM(m[0].muonBestTrack()->pt(), m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), 0.105658369);
+	lv2.SetPtEtaPhiM(m[1].muonBestTrack()->pt(), m[1].muonBestTrack()->eta(), m[1].muonBestTrack()->phi(), 0.105658369);
+	lv3.SetPtEtaPhiM(t[0].pt(), t[0].eta(), t[0].phi(), 0.105658369);
+	float mass_cut_sig = (lv1+lv2+lv3).M();
+	lv3.SetPtEtaPhiM(t[0].pt(), t[0].eta(), t[0].phi(), 0.13957);
+	float mass_cut_nor = (lv1+lv2+lv3).M();
+	bool isReject_sig = false;
+	bool isReject_nor = false;
+	if(mass_cut_sig > 2.4 || mass_cut_sig < 1.4) isReject_sig = true;
+	if(mass_cut_nor > 2.4 || mass_cut_nor < 1.4) isReject_nor = true;
+	if(isReject_sig && isReject_nor) continue;
+	invmass->push_back(mass_cut_sig);
+	invmass->push_back(mass_cut_nor);
 
 	// Build tracks
 	std::vector<reco::TransientTrack> t_trks;
@@ -393,29 +354,22 @@ void FillB(std::vector<reco::Muon> muonsel,
 	// Vertex fit
 	KalmanVertexFitter kvf;
 	TransientVertex fv = kvf.vertex(t_trks);
-	if(!fv.isValid()) continue;				      
-	//std::cout<<"*****Common vertex found*****"<<std::endl;
-
-	// Trigger objects
-	TriggerObjects hltMatchBits1 = TriggerTools::matchHLT(m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), triggerRecords, triggerEvent);
-	TriggerObjects hltMatchBits2 = TriggerTools::matchHLT(m[1].muonBestTrack()->eta(), m[1].muonBestTrack()->phi(), triggerRecords, triggerEvent);
-	TriggerObjects hltMatchBits3 = TriggerTools::matchHLT(t[0].eta(), t[0].phi(), triggerRecords, triggerEvent);
-	bool TriObj1 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits1) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits1) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits1) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits1));
-	bool TriObj2 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits2) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits2) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits2) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits2));
-	bool TriObj3 = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits3) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits3) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits3) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits3));
-	    if(!TriObj1) continue;
-	    if(!TriObj2) continue;
-	    if(!TriObj3) continue;
-
+	if(fv.isValid()){
+	  vf_Valid->push_back(1);
+	  vf_tC->push_back(fv.totalChiSquared());
+	  vf_dOF->push_back(fv.degreesOfFreedom());
+	  vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
+	  vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
+	}
+	else{
+	  vf_Valid->push_back(0);
+	  // Vertex Fitting info
+	  vf_tC->push_back(-99);
+	  vf_dOF->push_back(-99);
+	  vf_nC->push_back(-99);
+	  vf_Prob->push_back(-99);
+	}
+	
 	// Store all possible triples
 	// Muon info
 	for(int i=0; i<2; i++){
@@ -569,13 +523,6 @@ void FillB(std::vector<reco::Muon> muonsel,
 	  muon_trkID->push_back(0);
 	  muon_hltMatchBits->push_back(0);
 	}
-	  
-	// Vertex Fitting info
-	vf_tC->push_back(fv.totalChiSquared());
-	vf_dOF->push_back(fv.degreesOfFreedom());
-	vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
-	vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
-	//std::cout<<"end of processing"<<std::end;
 
 	// Category info
 	category->push_back(2);
@@ -628,6 +575,8 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
 		      std::vector<float> *vf_nC,
 		      std::vector<float> *vf_Prob,
 		      std::vector<int>   *category,
+	              std::vector<int>   *vf_Valid,
+		      std::vector<float> *invmass,
                       const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
 		      const std::vector<TriggerRecord> &triggerRecords,
 		      const trigger::TriggerEvent &triggerEvent)
@@ -668,17 +617,6 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
     if(!(itMu->type() & baconhep::EMuType::kGlobal || itMu->type() & baconhep::EMuType::kTracker))
       continue;
 
-    // Trigger Muon
-    /*
-    TriggerObjects hltMatchBits = TriggerTools::matchHLT(itMu->eta(), itMu->phi(), triggerRecords, triggerEvent);
-    // Check if this is correct!!!+++++++++++++++++++++++++++++++++++++
-    bool MuonTriObj  = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits) ||
-			triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits));
-    if(!MuonTriObj) continue;
-    */
-
     // Push to muon array
     muonsel.push_back(*itMu);
   }
@@ -702,17 +640,6 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
     if(itTrk->pt() < fTrackMinPt) continue;
     if(abs(itTrk->eta()) > 2.4) continue;
 
-     // Trigger Track
-    /*
-     TriggerObjects hltMatchBits = TriggerTools::matchHLT(itTrk->eta(), itTrk->phi(), triggerRecords, triggerEvent);
-    // Check if this is correct!!!+++++++++++++++++++++++++++++++++++++
-    bool TrkTriObj = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",hltMatchBits) ||
-		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",hltMatchBits) ||
-		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",hltMatchBits) ||
-		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",hltMatchBits));
-    if(!TrkTriObj) continue;
-    */
-
     // Push to trk array
     trksel.push_back(*itTrk);
   }
@@ -729,17 +656,17 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
     FillA(muonsel, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
     FillB(muonsel, trksel, pfCandCol, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
   }
   if(muonsel.size() == 2){
     FillB(muonsel, trksel, pfCandCol, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
   }
    // End of events processing //
 

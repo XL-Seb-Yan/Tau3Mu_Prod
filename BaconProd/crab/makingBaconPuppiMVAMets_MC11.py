@@ -7,13 +7,13 @@ process.load('Configuration/StandardSequences/Services_cff')
 process.load('FWCore/MessageService/MessageLogger_cfi')
 process.load('Configuration/StandardSequences/GeometryDB_cff')
 process.load('Configuration/StandardSequences/MagneticField_38T_cff')
-#process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
-process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_condDBv2_cff')
+process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
+#process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_condDBv2_cff')
 process.load('Configuration/EventContent/EventContent_cff')
 process.load('TrackingTools/TransientTrack/TransientTrackBuilder_cfi')
 
-process.MessageLogger.cerr.FwkReport.reportEvery = 100
-process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
+process.MessageLogger.cerr.FwkReport.reportEvery = 500
+process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_v3'
 
 #process.load("RecoTauTag/Configuration/RecoPFTauTag_cff")
 
@@ -21,12 +21,9 @@ process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
 #process.load('BaconProd/Ntupler/myJetExtras04_cff')    # include gen jets and b-tagging
 
 process.load('BaconProd/Ntupler/myMETFilters_cff')        # apply MET filters set to tagging mode
-#process.load('RecoMET.METPUSubtraction.mvaPFMET30_DATA_cff')     # MVA MET from Stephanie
+#process.load('RecoMET.METPUSubtraction.mvaPFMET30_cff')     # MVA MET from Stephanie
 process.load("BaconProd/Ntupler/myPFMETCorrections_cff")  # PF MET corrections
-
 #process.pfJetMETcorr.jetCorrLabel = cms.string("ak5PFL1FastL2L3")
-
-process.load('CommonTools.ParticleFlow.pfNoPileUpJME_cff')
 
 # trigger filter
 import os
@@ -37,13 +34,13 @@ process.hltHighLevel.throw = cms.bool(False)
 process.hltHighLevel.HLTPaths = cms.vstring()
 
 #process.pfMVAMEt.isTestSample = cms.bool(False)
-
 from RecoJets.JetProducers.ak4PFJets_cfi import ak4PFJets
 from RecoMET.METProducers.PFMET_cfi import pfMet
 
 process.load("CondCore.DBCommon.CondDBCommon_cfi")
 from CondCore.DBCommon.CondDBSetup_cfi import *
 ## load Puppi stuff
+#PUPPI JEC
 process.load('CommonTools/PileupAlgos/Puppi_cff') 
 process.load('BaconProd/Ntupler/myPUPPICorrections_cff')
 process.pfCandNoLep = cms.EDFilter("CandPtrSelector", src = cms.InputTag("particleFlow"), cut = cms.string("abs(pdgId) != 13 && abs(pdgId) != 11 && abs(pdgId) != 15"))
@@ -65,14 +62,12 @@ process.puppiPhoton.puppiCandName = 'puppimetinput'
 process.puppiPhoton.candName = 'particleFlow'
 process.puppiPhoton.photonName = 'gedPhotons'
 
-#process.puppiForMET = cms.EDProducer("CandViewMerger",src = cms.VInputTag( 'puppiPhoton'))
-
 # Include the stuff for Puppi MET
 process.pfMetPuppi = pfMet.clone();
 process.pfMetPuppi.src = cms.InputTag('puppiPhoton')
 process.pfMetPuppi.calculateSignificance = False
 
-process.ak4PFJetsPuppi   = ak4PFJets.clone(src = cms.InputTag("puppinolep"))
+process.ak4PFJetsPuppi   = ak4PFJets.clone(src = cms.InputTag("puppiPhoton"))
 
 hlt_file = open(cmssw_base + "/src/" + hlt_filename, "r")
 for line in hlt_file.readlines():
@@ -80,11 +75,16 @@ for line in hlt_file.readlines():
   if (line[0:3] == 'HLT'):         # assumes typical lines begin with HLT path name (e.g. HLT_Mu15_v1)
     hlt_path = line.split()[0]
     process.hltHighLevel.HLTPaths.extend(cms.untracked.vstring(hlt_path))
-    
+
     process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
     process.source = cms.Source("PoolSource",
-                                fileNames = cms.untracked.vstring('/store/data/Run2016H/DoubleMuon/AOD/PromptReco-v2/000/281/613/00000/1EBE3C8E-E684-E611-A8B9-02163E014224.root')
-                                #fileNames = cms.untracked.vstring('file:1E70CEEB-68A8-E511-8414-00266CFFC0C0.root')
+                                  fileNames = cms.untracked.vstring(
+                                   'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/045DCD5C-5CF7-E711-8838-02163E01341E.root',
+                                    'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/047B66C1-F2FE-E711-A7FA-008CFAC9405C.root',
+                                    'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/062A73CA-D5FA-E711-BCAB-02163E01A714.root',
+                                    'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0A1F8DF9-70FF-E711-A750-A4BF0112BE02.root',
+                                    'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0A8250FE-DBFA-E711-B148-02163E01A675.root'
+                                  )
                                 )
     process.source.inputCommands = cms.untracked.vstring("keep *",
                                                          "drop *_MEtoEDMConverter_*_*")
@@ -95,15 +95,15 @@ process.options = cms.untracked.PSet(
   fileMode    = cms.untracked.string('NOMERGE')
   )
 
-is_data_flag = True 
+is_data_flag = False 
 do_hlt_filter = False
 process.ntupler = cms.EDAnalyzer('NtuplerMod',
                                  skipOnHLTFail = cms.untracked.bool(do_hlt_filter),
-                                 outputName    = cms.untracked.string('Output.root'),
+                                 outputName    = cms.untracked.string('OutputS1.root'),
                                  TriggerFile   = cms.untracked.string(hlt_filename),
                                  edmPVName     = cms.untracked.string('offlinePrimaryVertices'),
                                  edmPFCandName = cms.untracked.string('particleFlow'),
-                                 
+                                     
                                  Info = cms.untracked.PSet(
     isActive             = cms.untracked.bool(True),
     edmPFCandName        = cms.untracked.string('particleFlow'),
@@ -113,9 +113,7 @@ process.ntupler = cms.EDAnalyzer('NtuplerMod',
     #edmPFMETCorrName     = cms.untracked.string('pfType1CorrectedMet'),
     edmPFMETCorrName     = cms.untracked.string('pfMetT1'),
     edmMVAMETName        = cms.untracked.string('pfMVAMEt30'),
-    #edmPuppETName        = cms.untracked.string('pfType1PuppiCorrectedMet'),
     edmPuppETName        = cms.untracked.string('pfMet'),
-    #edmPuppETName        = cms.untracked.string('pfMetPuppi'),
     edmTrackMET          = cms.untracked.string('pfChMet'),
     edmRhoForIsoName     = cms.untracked.string('fixedGridRhoFastjetAll'),
     edmRhoForJetEnergy   = cms.untracked.string('fixedGridRhoFastjetAll'),
@@ -125,6 +123,7 @@ process.ntupler = cms.EDAnalyzer('NtuplerMod',
                                  
                                  GenInfo = cms.untracked.PSet(
     isActive            = ( cms.untracked.bool(False) if is_data_flag else cms.untracked.bool(True) ),
+    #isActive            = cms.untracked.bool(False),
     edmGenEventInfoName = cms.untracked.string('generator'),
     edmGenParticlesName = cms.untracked.string('genParticles'),
     fillAllGen          = cms.untracked.bool(False)
@@ -138,8 +137,8 @@ process.ntupler = cms.EDAnalyzer('NtuplerMod',
     maxAbsZ       = cms.untracked.double(24),
     maxRho        = cms.untracked.double(2)
     ),
-                                     
-                                 Electron = cms.untracked.PSet(
+                                 
+                                     Electron = cms.untracked.PSet(
     isActive                  = cms.untracked.bool(False),
     minPt                     = cms.untracked.double(20),
     edmName                   = cms.untracked.string('gedGsfElectrons'),
@@ -149,18 +148,17 @@ process.ntupler = cms.EDAnalyzer('NtuplerMod',
     edmConversionName         = cms.untracked.string('allConversions'),
     edmSuperClusterName       = cms.untracked.string('particleFlowEGamma')
     ),
-                                     
+                                 
                                  Muon = cms.untracked.PSet(
     isActive      = cms.untracked.bool(True),
     minPt         = cms.untracked.double(3),
     edmName       = cms.untracked.string('muons'),
     edmPFCandName = cms.untracked.string('particleFlow'),
-        
-    # save general tracker tracks in our muon collection (used in tag-and-probe for muons)
-    doSaveTracks = cms.untracked.bool(True),
-    minTrackPt   = cms.untracked.double(1.5),
-    edmTrackName = cms.untracked.string('generalTracks')
     
+    # save general tracker tracks in our muon collection (used in tag-and-probe for muons)
+    doSaveTracks = cms.untracked.bool(False),
+    minTrackPt   = cms.untracked.double(1.2),
+    edmTrackName = cms.untracked.string('generalTracks')    
     ),
                                      
                                  Photon = cms.untracked.PSet(
@@ -185,63 +183,62 @@ process.ntupler = cms.EDAnalyzer('NtuplerMod',
                                  #    ringIso2File     = cms.untracked.string('BaconProd/Utils/data/gbrfTauIso_v2.root'),
                                  #    edmRhoForRingIso = cms.untracked.string('kt6PFJets')
                                  #  ),
-                                     
                                  Jet = cms.untracked.PSet(
-    isActive             = cms.untracked.bool(False),
-    minPt                = cms.untracked.double(20),
-    #    doComputeFullJetInfo = cms.untracked.bool(True),
-    #    doGenJet             = ( cms.untracked.bool(False) if is_data_flag else cms.untracked.bool(True) ),
-    #    
-    #    coneSizes = cms.untracked.vdouble(0.4),#,0.8,1.2),
-    #postFix   = cms.untracked.vstring("Puppi"),
-    #    
-    edmPVName = cms.untracked.string('offlinePrimaryVertices'),
-    #    
-    # ORDERED lists of jet energy correction input files
-    jecFiles = ( cms.untracked.vstring('BaconProd/Utils/data/Summer15_25nsV6_DATA_L1RC_AK4PFchs.txt',
-                                       'BaconProd/Utils/data/Summer15_25nsV6_DATA_L2Relative_AK4PFchs.txt',
-                                       'BaconProd/Utils/data/Summer15_25nsV6_DATA_L3Absolute_AK4PFchs.txt',
-                                       'BaconProd/Utils/data/Summer15_25nsV6_DATA_L2L3Residual_AK4PFchs.txt')
-                 if is_data_flag else 
-                 cms.untracked.vstring('BaconProd/Utils/data/Summer15_25nsV6_MC_L1FastJet_AK4PFchs.txt',
-                                       'BaconProd/Utils/data/Summer15_25nsV6_MC_L2Relative_AK4PFchs.txt',
-                                       'BaconProd/Utils/data/Summer15_25nsV6_MC_L3Absolute_AK4PFchs.txt')
-                 ),
-    jecUncFiles = ( cms.untracked.vstring('dummy.txt')
-                    if is_data_flag else
-                    cms.untracked.vstring('dummy.txt')
-                    ),
-    edmRhoName = cms.untracked.string('fixedGridRhoFastjetAll'),
-    #    
-    #    # ORDERD list of pileup jet ID input files
-    #    jetPUIDFiles = cms.untracked.vstring('',
-    #                                         'BaconProd/Utils/data/TMVAClassificationCategory_JetID_53X_Dec2012.weights.xml'),
-    #    
-    # names of various jet-related collections
-    jetName            = cms.untracked.string('ak4PFJetsCHS'),
-    #    genJetName         = cms.untracked.string('GenJets'),
-    #    jetFlavorName      = cms.untracked.string('byValAlgo'),
-    #    jetFlavorPhysName  = cms.untracked.string('byValPhys'),
-    #    pruneJetName       = cms.untracked.string('caPFJetsPruned'),
-    #    subJetName         = cms.untracked.string('caPFJetsPruned'),
-    csvBTagName        = cms.untracked.string('combinedInclusiveSecondaryVertexV2BJetTags')#,
-    #    csvBTagSubJetName  = cms.untracked.string('jetCombinedSecondaryVertexBJetTagsSJ'),
-    #    jettiness          = cms.untracked.string('Njettiness'),
-    #    qgLikelihood       = cms.untracked.string('QGTagger'),
-    #    qgLikelihoodSubjet = cms.untracked.string('QGTaggerSubJets')
-    ),
-                                     
-                                   PFCand = cms.untracked.PSet(
-                                     isActive       = cms.untracked.bool(False),
-                                     edmName        = cms.untracked.string('particleFlow'),
-                                     edmPVName      = cms.untracked.string('offlinePrimaryVertices'),
-                                     doAddDepthTime = cms.untracked.bool(False)
-                                   )
+        isActive             = cms.untracked.bool(False),
+        minPt                = cms.untracked.double(20),
+        #    doComputeFullJetInfo = cms.untracked.bool(True),
+        #    doGenJet             = ( cms.untracked.bool(False) if is_data_flag else cms.untracked.bool(True) ),
+        #    
+        #coneSizes = cms.untracked.vdouble(0.4),#,0.8,1.2),
+        postFix   = cms.untracked.vstring("CHS"),
+        #    
+        edmPVName = cms.untracked.string('offlinePrimaryVertices'),
+        ##    
+        ## ORDERED lists of jet energy correction input files
+        jecFiles = ( cms.untracked.vstring('dummy.txt',
+                                           'dummy.txt',
+                                           'dummy.txt',
+                                           'dummy.txt')
+                     if is_data_flag else 
+                     cms.untracked.vstring('BaconProd/Utils/data/Fall15_25nsV2_MC_L1FastJet_AK4PFchs.txt',
+                                           'BaconProd/Utils/data/Fall15_25nsV2_MC_L2Relative_AK4PFchs.txt',
+                                           'BaconProd/Utils/data/Fall15_25nsV2_MC_L3Absolute_AK4PFchs.txt')
+                     ),
+        jecUncFiles = ( cms.untracked.vstring('dummy.txt')
+                        if is_data_flag else
+                        cms.untracked.vstring('BaconProd/Utils/data/Fall15_25nsV2_MC_Uncertainty_AK4PFchs.txt')
+                        ),
+        edmRhoName = cms.untracked.string('fixedGridRhoFastjetAll'),
+        #    
+        #    # ORDERD list of pileup jet ID input files
+        #    jetPUIDFiles = cms.untracked.vstring('',
+        #                                         'BaconProd/Utils/data/TMVAClassificationCategory_JetID_53X_Dec2012.weights.xml'),
+        #    
+        # names of various jet-related collections
+        jetName            = cms.untracked.string('ak4PFJetsCHS'),
+        #    genJetName         = cms.untracked.string('GenJets'),
+        #    jetFlavorName      = cms.untracked.string('byValAlgo'),
+        #    jetFlavorPhysName  = cms.untracked.string('byValPhys'),
+        #    pruneJetName       = cms.untracked.string('caPFJetsPruned'),
+        #    subJetName         = cms.untracked.string('caPFJetsPruned'),
+        csvBTagName        = cms.untracked.string('combinedInclusiveSecondaryVertexV2BJetTags')#,
+        #    csvBTagSubJetName  = cms.untracked.string('jetCombinedSecondaryVertexBJetTagsSJ'),
+        #    jettiness          = cms.untracked.string('Njettiness'),
+        #    qgLikelihood       = cms.untracked.string('QGTagger'),
+        #    qgLikelihoodSubjet = cms.untracked.string('QGTaggerSubJets')
+        ),
+                                 
+                                 PFCand = cms.untracked.PSet(
+        isActive       = cms.untracked.bool(False),
+        edmName        = cms.untracked.string('particleFlow'),
+        edmPVName      = cms.untracked.string('offlinePrimaryVertices'),
+        doAddDepthTime = cms.untracked.bool(False)
+        )
                                  )
 
 process.baconSequence = cms.Sequence(#process.PFBRECO*
   process.metFilters*
-  #process.pfMVAMEt30Sequence* #MVA MET
+  #process.pfMVAMEt30Sequence* #MVA ME
   process.producePFMETCorrections*
   #process.pfCandNoLep*
   #process.pfCandLep*
@@ -251,8 +248,9 @@ process.baconSequence = cms.Sequence(#process.PFBRECO*
   #process.puppiPhoton*
   #process.pfMetPuppi* #  Puppi Met
   #process.ak4PFJetsPuppi* 
-  #process.ak4PuppiL1FastL2L3ResidualChain*
+  #process.ak4PuppiL1FastL2L3Chain*
   #process.producePFMETCorrectionsPuppi *
+  #process.producePFMETCorrections*
   #process.recojetsequence*
   #process.genjetsequence*
   #process.AK5jetsequenceCHS*
@@ -260,15 +258,15 @@ process.baconSequence = cms.Sequence(#process.PFBRECO*
   #process.recoTau*   ### must come after antiktGenJets otherwise conflict on RecoJets/JetProducers/plugins
   #process.MVAMetSeq*
   process.ntupler)
-    
+
 if do_hlt_filter:
   process.p = cms.Path(process.hltHighLevel*process.baconSequence)
 else:
   process.p = cms.Path(process.baconSequence)
   
-  #
-  # simple checks to catch some mistakes...
-  #
+      #
+      # simple checks to catch some mistakes...
+      #
   if is_data_flag:
     assert process.ntupler.GenInfo.isActive == cms.untracked.bool(False)
-#  assert process.ntupler.Jet.doGenJet == cms.untracked.bool(False)
+  #  assert process.ntupler.Jet.doGenJet == cms.untracked.bool(False)

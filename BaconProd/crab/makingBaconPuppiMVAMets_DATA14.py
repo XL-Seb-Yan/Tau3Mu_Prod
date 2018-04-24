@@ -12,7 +12,7 @@ process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_condD
 process.load('Configuration/EventContent/EventContent_cff')
 process.load('TrackingTools/TransientTrack/TransientTrackBuilder_cfi')
 
-process.MessageLogger.cerr.FwkReport.reportEvery = 100
+process.MessageLogger.cerr.FwkReport.reportEvery = 500
 process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
 
 #process.load("RecoTauTag/Configuration/RecoPFTauTag_cff")
@@ -83,7 +83,13 @@ for line in hlt_file.readlines():
     
     process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
     process.source = cms.Source("PoolSource",
-                                fileNames = cms.untracked.vstring('/store/data/Run2016H/DoubleMuon/AOD/PromptReco-v2/000/281/613/00000/1EBE3C8E-E684-E611-A8B9-02163E014224.root')
+                                fileNames = cms.untracked.vstring(
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016B/DoubleMuonLowMass/AOD/23Sep2016-v3/00000/02F61974-4E98-E611-8628-0242AC130003.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016B/DoubleMuonLowMass/AOD/23Sep2016-v3/00000/04180AC2-5098-E611-93C5-008CFA0514E0.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016B/DoubleMuonLowMass/AOD/23Sep2016-v3/00000/041FD277-3A98-E611-979F-3417EBE705EB.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016B/DoubleMuonLowMass/AOD/23Sep2016-v3/00000/043D9C28-5B98-E611-BDCC-901B0E5427A6.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016B/DoubleMuonLowMass/AOD/23Sep2016-v3/00000/04BB45D5-6398-E611-85CD-000AE488B9AD.root'
+                                )
                                 #fileNames = cms.untracked.vstring('file:1E70CEEB-68A8-E511-8414-00266CFFC0C0.root')
                                 )
     process.source.inputCommands = cms.untracked.vstring("keep *",
@@ -99,7 +105,7 @@ is_data_flag = True
 do_hlt_filter = False
 process.ntupler = cms.EDAnalyzer('NtuplerMod',
                                  skipOnHLTFail = cms.untracked.bool(do_hlt_filter),
-                                 outputName    = cms.untracked.string('Output.root'),
+                                 outputName    = cms.untracked.string('OutputD4.root'),
                                  TriggerFile   = cms.untracked.string(hlt_filename),
                                  edmPVName     = cms.untracked.string('offlinePrimaryVertices'),
                                  edmPFCandName = cms.untracked.string('particleFlow'),

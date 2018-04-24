@@ -12,7 +12,7 @@ process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_condD
 process.load('Configuration/EventContent/EventContent_cff')
 process.load('TrackingTools/TransientTrack/TransientTrackBuilder_cfi')
 
-process.MessageLogger.cerr.FwkReport.reportEvery = 100
+process.MessageLogger.cerr.FwkReport.reportEvery = 500
 process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
 
 #process.load("RecoTauTag/Configuration/RecoPFTauTag_cff")
@@ -83,7 +83,18 @@ for line in hlt_file.readlines():
     
     process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
     process.source = cms.Source("PoolSource",
-                                fileNames = cms.untracked.vstring('/store/data/Run2016H/DoubleMuon/AOD/PromptReco-v2/000/281/613/00000/1EBE3C8E-E684-E611-A8B9-02163E014224.root')
+                                fileNames = cms.untracked.vstring(
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016G/DoubleMuonLowMass/AOD/23Sep2016-v1/100000/001A518F-368C-E611-B0C9-0CC47A4C8E38.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016G/DoubleMuonLowMass/AOD/23Sep2016-v1/100000/002CB512-3990-E611-BC38-0CC47A4129F4.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016G/DoubleMuonLowMass/AOD/23Sep2016-v1/100000/005D12C6-AE8D-E611-B409-0242AC130004.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016G/DoubleMuonLowMass/AOD/23Sep2016-v1/100000/0080D7F4-928D-E611-B8F8-0CC47AD99044.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016G/DoubleMuonLowMass/AOD/23Sep2016-v1/100000/00AF37DD-D78F-E611-B240-008CFA1111D4.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016G/DoubleMuonLowMass/AOD/23Sep2016-v1/100000/00CBA16E-8B8D-E611-A977-0CC47A7C3444.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016G/DoubleMuonLowMass/AOD/23Sep2016-v1/100000/00E46EE0-978D-E611-B2A8-0CC47A78A4BA.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016G/DoubleMuonLowMass/AOD/23Sep2016-v1/100000/02A8E4E9-B18D-E611-9C4C-0025905B8574.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016G/DoubleMuonLowMass/AOD/23Sep2016-v1/100000/02BE8473-8B8D-E611-AB83-0025905B8600.root',
+                                  'root://cms-xrd-global.cern.ch//store/data/Run2016G/DoubleMuonLowMass/AOD/23Sep2016-v1/100000/043B2DDB-0890-E611-A9B1-0CC47A1E0DC8.root'
+                                )
                                 #fileNames = cms.untracked.vstring('file:1E70CEEB-68A8-E511-8414-00266CFFC0C0.root')
                                 )
     process.source.inputCommands = cms.untracked.vstring("keep *",
@@ -99,7 +110,7 @@ is_data_flag = True
 do_hlt_filter = False
 process.ntupler = cms.EDAnalyzer('NtuplerMod',
                                  skipOnHLTFail = cms.untracked.bool(do_hlt_filter),
-                                 outputName    = cms.untracked.string('Output.root'),
+                                 outputName    = cms.untracked.string('OutputD1.root'),
                                  TriggerFile   = cms.untracked.string(hlt_filename),
                                  edmPVName     = cms.untracked.string('offlinePrimaryVertices'),
                                  edmPFCandName = cms.untracked.string('particleFlow'),
