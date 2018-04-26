@@ -521,7 +521,7 @@ void FillB(std::vector<reco::Muon> muonsel,
 	  muon_nPixLayers->push_back(t[i].hitPattern().pixelLayersWithMeasurement()); 
 	  muon_nMatchStn->push_back(0);
 	  muon_trkID->push_back(0);
-	  muon_hltMatchBits->push_back(0);
+	  muon_hltMatchBits->push_back(TriggerTools::matchHLT(t[i].eta(), t[i].phi(), triggerRecords, triggerEvent));
 	}
 
 	// Category info
