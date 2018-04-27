@@ -84,6 +84,8 @@ namespace baconhep
 		std::vector<float>               *vf_Prob,
 		std::vector<int>                 *category,
 		std::vector<int>                 *vf_Valid,
+		std::vector<float>                 *vf_ip,
+		std::vector<float>                 *tri_iso,
 		std::vector<float>               *invmass,   
                 const edm::Event		 &iEvent,	   // event info
 	        const edm::EventSetup		 &iSetup,	   // event setup info

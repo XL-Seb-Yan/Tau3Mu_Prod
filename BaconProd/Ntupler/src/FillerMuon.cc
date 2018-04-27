@@ -3,6 +3,7 @@
 #include "BaconAna/DataFormats/interface/BaconAnaDefs.hh"
 #include "BaconAna/DataFormats/interface/TMuon.hh"
 #include "BaconAna/Utils/interface/TTrigger.hh"
+#include "BaconAna/Utils/interface/MyTools.hh"
 #include "FWCore/Framework/interface/Event.h"
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
@@ -21,6 +22,7 @@
 #include <TClonesArray.h>
 #include <TLorentzVector.h>
 #include <TMath.h>
+#include <TVector3.h>
 #include <iostream>
 #include <vector>
 #include <bitset>
@@ -91,6 +93,8 @@ void FillA(std::vector<reco::Muon> muonsel,
            std::vector<float> *vf_Prob,
 	   std::vector<int>   *category,
 	   std::vector<int>   *vf_Valid,
+	   std::vector<float> *vf_ip,
+	   std::vector<float> *tri_iso,
 	   std::vector<float> *invmass,
 	   const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
            const std::vector<TriggerRecord> &triggerRecords,
@@ -115,10 +119,11 @@ void FillA(std::vector<reco::Muon> muonsel,
 	if(m[2].innerTrack().isNull()) continue;
 
 	// Triplet mass region
-	TLorentzVector lv1, lv2, lv3;
+	TLorentzVector lv1, lv2, lv3, lvtau;
 	lv1.SetPtEtaPhiM(m[0].muonBestTrack()->pt(), m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), 0.105658369);
 	lv2.SetPtEtaPhiM(m[1].muonBestTrack()->pt(), m[1].muonBestTrack()->eta(), m[1].muonBestTrack()->phi(), 0.105658369);
 	lv3.SetPtEtaPhiM(m[2].muonBestTrack()->pt(), m[2].muonBestTrack()->eta(), m[2].muonBestTrack()->phi(), 0.105658369);
+	lvtau = lv1+lv2+lv3;
 	float mass_cut = (lv1+lv2+lv3).M();
 	if(mass_cut > 2.4 || mass_cut < 1.4) continue;
 	invmass->push_back(mass_cut);
@@ -142,6 +147,13 @@ void FillA(std::vector<reco::Muon> muonsel,
 	  vf_dOF->push_back(fv.degreesOfFreedom());
 	  vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
 	  vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
+	  // Vertex impact parameter
+	  TVector3 fv_vector, pv_vector, tau_vector;
+	  fv_vector.SetXYZ(fv.position().x(),fv.position().y(),fv.position().z());
+	  pv_vector.SetXYZ(pv.x(),pv.y(),pv.z());
+	  tau_vector.SetXYZ(lvtau.Px(),lvtau.Py(),lvtau.Pz());
+	  float ip = (fv_vector - pv_vector).Mag() * tau_vector.Angle(fv_vector - pv_vector);
+	  vf_ip->push_back(ip);
 	}
 	else{
 	  vf_Valid->push_back(0);
@@ -150,6 +162,7 @@ void FillA(std::vector<reco::Muon> muonsel,
 	  vf_dOF->push_back(-99);
 	  vf_nC->push_back(-99);
 	  vf_Prob->push_back(-99);
+	  vf_ip->push_back(-99);
 	}
 
 	// Store all possible triples
@@ -249,6 +262,21 @@ void FillA(std::vector<reco::Muon> muonsel,
 	  muon_hltMatchBits->push_back(TriggerTools::matchHLT(m[i].eta(), m[i].phi(), triggerRecords, triggerEvent));
 	}
 
+	// Triplet isolation for muon hypothesis only
+	float deltaRIso= 0;
+	float taudeltaR = 0;
+	float deltaCan1 = toolbox::deltaR(m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
+	float deltaCan2 = toolbox::deltaR(m[1].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
+	float deltaCan3 = toolbox::deltaR(m[2].muonBestTrack()->eta(), m[2].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
+	for(reco::TrackCollection::const_iterator itTrk = trackCol->begin(); itTrk!=trackCol->end(); ++itTrk) {
+	  taudeltaR = toolbox::deltaR(itTrk->eta(), itTrk->phi(), lvtau.Eta(), lvtau.Phi());
+	  if(taudeltaR < 0.5) deltaRIso += itTrk->pt();
+	}
+	if(deltaCan1 < 0.5) deltaRIso -= m[0].muonBestTrack()->pt();
+	if(deltaCan2 < 0.5) deltaRIso -= m[1].muonBestTrack()->pt();
+	if(deltaCan3 < 0.5) deltaRIso -= m[2].muonBestTrack()->pt();
+	tri_iso->push_back(deltaRIso);
+
 	// Category info
 	category->push_back(1);
       }
@@ -304,6 +332,8 @@ void FillB(std::vector<reco::Muon> muonsel,
            std::vector<float> *vf_Prob,
 	   std::vector<int>   *category,
 	   std::vector<int>   *vf_Valid,
+	   std::vector<float> *vf_ip,
+	   std::vector<float> *tri_iso,
 	   std::vector<float> *invmass,
 	   const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
            const std::vector<TriggerRecord> &triggerRecords,
@@ -328,10 +358,11 @@ void FillB(std::vector<reco::Muon> muonsel,
 	t[0] = trksel[k];
 
 	// Triplet mass region
-	TLorentzVector lv1, lv2, lv3;
+	TLorentzVector lv1, lv2, lv3, lvtau;
 	lv1.SetPtEtaPhiM(m[0].muonBestTrack()->pt(), m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), 0.105658369);
 	lv2.SetPtEtaPhiM(m[1].muonBestTrack()->pt(), m[1].muonBestTrack()->eta(), m[1].muonBestTrack()->phi(), 0.105658369);
 	lv3.SetPtEtaPhiM(t[0].pt(), t[0].eta(), t[0].phi(), 0.105658369);
+	lvtau = lv1+lv2+lv3;
 	float mass_cut_sig = (lv1+lv2+lv3).M();
 	lv3.SetPtEtaPhiM(t[0].pt(), t[0].eta(), t[0].phi(), 0.13957);
 	float mass_cut_nor = (lv1+lv2+lv3).M();
@@ -360,6 +391,13 @@ void FillB(std::vector<reco::Muon> muonsel,
 	  vf_dOF->push_back(fv.degreesOfFreedom());
 	  vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
 	  vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
+	  // Vertex impact parameter, for muon hypothesis only
+	  TVector3 fv_vector, pv_vector, tau_vector;
+	  fv_vector.SetXYZ(fv.position().x(),fv.position().y(),fv.position().z());
+	  pv_vector.SetXYZ(pv.x(),pv.y(),pv.z());
+	  tau_vector.SetXYZ(lvtau.Px(),lvtau.Py(),lvtau.Pz());
+	  float ip = (fv_vector - pv_vector).Mag() * tau_vector.Angle(fv_vector - pv_vector);
+	  vf_ip->push_back(ip);
 	}
 	else{
 	  vf_Valid->push_back(0);
@@ -368,6 +406,7 @@ void FillB(std::vector<reco::Muon> muonsel,
 	  vf_dOF->push_back(-99);
 	  vf_nC->push_back(-99);
 	  vf_Prob->push_back(-99);
+	  vf_ip->push_back(-99);
 	}
 	
 	// Store all possible triples
@@ -524,6 +563,21 @@ void FillB(std::vector<reco::Muon> muonsel,
 	  muon_hltMatchBits->push_back(TriggerTools::matchHLT(t[i].eta(), t[i].phi(), triggerRecords, triggerEvent));
 	}
 
+	// Triplet isolation for muon hypothesis only
+	float deltaRIso= 0;
+	float taudeltaR = 0;
+	float deltaCan1 = toolbox::deltaR(m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
+	float deltaCan2 = toolbox::deltaR(m[1].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
+	float deltaCan3 = toolbox::deltaR(t[0].eta(), t[0].phi(), lvtau.Eta(), lvtau.Phi());
+	for(reco::TrackCollection::const_iterator itTrk = trackCol->begin(); itTrk!=trackCol->end(); ++itTrk) {
+	  taudeltaR = toolbox::deltaR(itTrk->eta(), itTrk->phi(), lvtau.Eta(), lvtau.Phi());
+	  if(taudeltaR < 0.5) deltaRIso += itTrk->pt();
+	}
+	if(deltaCan1 < 0.5) deltaRIso -= m[0].muonBestTrack()->pt();
+	if(deltaCan2 < 0.5) deltaRIso -= m[1].muonBestTrack()->pt();
+	if(deltaCan3 < 0.5) deltaRIso -= t[0].pt();
+	tri_iso->push_back(deltaRIso);
+
 	// Category info
 	category->push_back(2);
       }
@@ -576,6 +630,8 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
 		      std::vector<float> *vf_Prob,
 		      std::vector<int>   *category,
 	              std::vector<int>   *vf_Valid,
+		      std::vector<float> *vf_ip,
+		      std::vector<float> *tri_iso,
 		      std::vector<float> *invmass,
                       const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
 		      const std::vector<TriggerRecord> &triggerRecords,
@@ -656,17 +712,17 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
     FillA(muonsel, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
     FillB(muonsel, trksel, pfCandCol, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
   }
   if(muonsel.size() == 2){
     FillB(muonsel, trksel, pfCandCol, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
   }
    // End of events processing //
 
