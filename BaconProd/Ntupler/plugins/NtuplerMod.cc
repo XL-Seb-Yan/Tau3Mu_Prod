@@ -198,6 +198,7 @@ NtuplerMod::NtuplerMod(const edm::ParameterSet &iConfig):
       fVfValid        = new std::vector<int>();   assert(fVfValid);
       fVfIp           = new std::vector<float>();   assert(fVfIp);
       fTriIso         = new std::vector<float>();   assert(fTriIso);
+      fTriIsoNtrk     = new std::vector<int>();   assert(fTriIsoNtrk);
       fInvMass        = new std::vector<float>(); assert(fInvMass);
       fFillerMuon        = new baconhep::FillerMuon(cfg,consumesCollector());       assert(fFillerMuon);
     }
@@ -297,6 +298,7 @@ NtuplerMod::~NtuplerMod()
   delete fVfValid;
   delete fVfIp;
   delete fTriIso;
+  delete fTriIsoNtrk;
   delete fInvMass;
   
   if(fIsActiveJet) {
@@ -372,6 +374,7 @@ void NtuplerMod::beginJob()
     fEventTree->Branch("VfValid",  fVfValid);
     fEventTree->Branch("VfIp",   fVfIp);
     fEventTree->Branch("TriIso",  fTriIso);
+    fEventTree->Branch("TriIsoNtrk",  fTriIsoNtrk);
     fEventTree->Branch("InvMass",  fInvMass);
   }
   if(fIsActivePhoton) { fEventTree->Branch("Photon",   &fPhotonArr); }
@@ -505,11 +508,12 @@ void NtuplerMod::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     fVfValid->clear();
     fVfIp->clear();
     fTriIso->clear();
+    fTriIsoNtrk->clear();
     fInvMass->clear();
     isFill = fFillerMuon->fill(fMuonPt, fMuonEta, fMuonPhi, fMuonPtErr, fMuonStaPt, fMuonStaEta, fMuonStaPhi, fMuonPfPt, fMuonPfEta, fMuonPfPhi, fMuonQ, fMuonTrkIso, fMuonEcalIso, fMuonHcalIso, fMuonChHadIso,
 		      fMuonGammaIso, fMuonNeuHadIso, fMuonPuIso, fMuonD0, fMuonDz, fMuonSip3d, fMuonTkNchi2, fMuonMuNchi2, fMuonTrkKink,
 		      fMuonGlbKink, fMuonNValidHits, fMuonTypeBits, fMuonSelectorBits, fMuonPogIDBits, fMuonNTkHits, fMuonNPixHits, fMuonNTkLayers, fMuonNPixLayers,
-			       fMuonNMatchStn, fMuonTrkID, fMuonHltMatchBits, fVfTc, fVfDof, fVfNc, fVfProb, fCategory, fVfValid, fVfIp, fTriIso, fInvMass, iEvent, iSetup, *pv, fTrigger->fRecords, *hTrgEvt);
+			       fMuonNMatchStn, fMuonTrkID, fMuonHltMatchBits, fVfTc, fVfDof, fVfNc, fVfProb, fCategory, fVfValid, fVfIp, fTriIso, fTriIsoNtrk, fInvMass, iEvent, iSetup, *pv, fTrigger->fRecords, *hTrgEvt);
   }
 
   if(fIsActivePhoton) {

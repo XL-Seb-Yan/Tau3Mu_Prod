@@ -166,7 +166,8 @@ class NtuplerMod : public edm::EDAnalyzer {
     std::vector<float>      *fVfProb;
     std::vector<int>        *fCategory;
     std::vector<int>        *fVfValid;
-    std::vector<float>        *fVfIp;
-    std::vector<float>        *fTriIso;
+    std::vector<float>      *fVfIp;
+    std::vector<float>      *fTriIso;
+    std::vector<int>        *fTriIsoNtrk;
     std::vector<float>      *fInvMass;
 };

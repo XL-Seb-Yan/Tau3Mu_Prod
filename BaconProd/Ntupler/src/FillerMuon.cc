@@ -95,6 +95,7 @@ void FillA(std::vector<reco::Muon> muonsel,
 	   std::vector<int>   *vf_Valid,
 	   std::vector<float> *vf_ip,
 	   std::vector<float> *tri_iso,
+	   std::vector<int>   *tri_isoNtrk,
 	   std::vector<float> *invmass,
 	   const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
            const std::vector<TriggerRecord> &triggerRecords,
@@ -263,19 +264,33 @@ void FillA(std::vector<reco::Muon> muonsel,
 	}
 
 	// Triplet isolation for muon hypothesis only
-	float deltaRIso= 0;
+	float deltaRIso = 0;
+	int deltaRIsoN = 0;
 	float taudeltaR = 0;
 	float deltaCan1 = toolbox::deltaR(m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
-	float deltaCan2 = toolbox::deltaR(m[1].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
+	float deltaCan2 = toolbox::deltaR(m[1].muonBestTrack()->eta(), m[1].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
 	float deltaCan3 = toolbox::deltaR(m[2].muonBestTrack()->eta(), m[2].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
 	for(reco::TrackCollection::const_iterator itTrk = trackCol->begin(); itTrk!=trackCol->end(); ++itTrk) {
 	  taudeltaR = toolbox::deltaR(itTrk->eta(), itTrk->phi(), lvtau.Eta(), lvtau.Phi());
-	  if(taudeltaR < 0.5) deltaRIso += itTrk->pt();
+	  if(taudeltaR < 0.5) {
+	    deltaRIso += itTrk->pt();
+	    deltaRIsoN++;
+	  }
 	}
-	if(deltaCan1 < 0.5) deltaRIso -= m[0].muonBestTrack()->pt();
-	if(deltaCan2 < 0.5) deltaRIso -= m[1].muonBestTrack()->pt();
-	if(deltaCan3 < 0.5) deltaRIso -= m[2].muonBestTrack()->pt();
+	if(deltaCan1 < 0.5) {
+	  deltaRIso -= m[0].muonBestTrack()->pt();
+	  deltaRIsoN--;
+	}
+	if(deltaCan2 < 0.5) {
+	  deltaRIso -= m[1].muonBestTrack()->pt();
+	  deltaRIsoN--;
+	}
+	if(deltaCan3 < 0.5) {
+	  deltaRIso -= m[2].muonBestTrack()->pt();
+	  deltaRIsoN--;
+	}
 	tri_iso->push_back(deltaRIso);
+	tri_isoNtrk->push_back(deltaRIsoN);
 
 	// Category info
 	category->push_back(1);
@@ -334,6 +349,7 @@ void FillB(std::vector<reco::Muon> muonsel,
 	   std::vector<int>   *vf_Valid,
 	   std::vector<float> *vf_ip,
 	   std::vector<float> *tri_iso,
+	   std::vector<int>   *tri_isoNtrk,
 	   std::vector<float> *invmass,
 	   const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
            const std::vector<TriggerRecord> &triggerRecords,
@@ -562,21 +578,35 @@ void FillB(std::vector<reco::Muon> muonsel,
 	  muon_trkID->push_back(0);
 	  muon_hltMatchBits->push_back(TriggerTools::matchHLT(t[i].eta(), t[i].phi(), triggerRecords, triggerEvent));
 	}
-
+	
 	// Triplet isolation for muon hypothesis only
-	float deltaRIso= 0;
+	float deltaRIso = 0;
+	int deltaRIsoN = 0;
 	float taudeltaR = 0;
 	float deltaCan1 = toolbox::deltaR(m[0].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
-	float deltaCan2 = toolbox::deltaR(m[1].muonBestTrack()->eta(), m[0].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
+	float deltaCan2 = toolbox::deltaR(m[1].muonBestTrack()->eta(), m[1].muonBestTrack()->phi(), lvtau.Eta(), lvtau.Phi());
 	float deltaCan3 = toolbox::deltaR(t[0].eta(), t[0].phi(), lvtau.Eta(), lvtau.Phi());
 	for(reco::TrackCollection::const_iterator itTrk = trackCol->begin(); itTrk!=trackCol->end(); ++itTrk) {
 	  taudeltaR = toolbox::deltaR(itTrk->eta(), itTrk->phi(), lvtau.Eta(), lvtau.Phi());
-	  if(taudeltaR < 0.5) deltaRIso += itTrk->pt();
+	  if(taudeltaR < 0.5) {
+	    deltaRIso += itTrk->pt();
+	    deltaRIsoN++;
+	  }
 	}
-	if(deltaCan1 < 0.5) deltaRIso -= m[0].muonBestTrack()->pt();
-	if(deltaCan2 < 0.5) deltaRIso -= m[1].muonBestTrack()->pt();
-	if(deltaCan3 < 0.5) deltaRIso -= t[0].pt();
+	if(deltaCan1 < 0.5) {
+	  deltaRIso -= m[0].muonBestTrack()->pt();
+	  deltaRIsoN--;
+	}
+	if(deltaCan2 < 0.5) {
+	  deltaRIso -= m[1].muonBestTrack()->pt();
+	  deltaRIsoN--;
+	}
+	if(deltaCan3 < 0.5) {
+	  deltaRIso -= t[0].pt();
+	  deltaRIsoN--;
+	}
 	tri_iso->push_back(deltaRIso);
+	tri_isoNtrk->push_back(deltaRIsoN);
 
 	// Category info
 	category->push_back(2);
@@ -632,6 +662,7 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
 	              std::vector<int>   *vf_Valid,
 		      std::vector<float> *vf_ip,
 		      std::vector<float> *tri_iso,
+		      std::vector<int>   *tri_isoNtrk,
 		      std::vector<float> *invmass,
                       const edm::Event &iEvent, const edm::EventSetup &iSetup, const reco::Vertex &pv, 
 		      const std::vector<TriggerRecord> &triggerRecords,
@@ -712,17 +743,17 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
     FillA(muonsel, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, tri_isoNtrk, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
     FillB(muonsel, trksel, pfCandCol, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, tri_isoNtrk, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
   }
   if(muonsel.size() == 2){
     FillB(muonsel, trksel, pfCandCol, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, tri_isoNtrk, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
   }
    // End of events processing //
 
