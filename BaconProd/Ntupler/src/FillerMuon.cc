@@ -102,7 +102,8 @@ void FillA(std::vector<reco::Muon> muonsel,
            const trigger::TriggerEvent &triggerEvent)
 {
   // Load trigger menu
-  const baconhep::TTrigger triggerMenu("/afs/cern.ch/user/x/xuyan/public/TriggerMenu/HLT_50nsGRun");
+  std::string cmssw_base_src = getenv("CMSSW_BASE"); cmssw_base_src+="/src/";
+  const baconhep::TTrigger triggerMenu(cmssw_base_src+"BaconAna/DataFormats/data/HLT_50nsGRun");
 
   reco::Muon m[3];
   edm::ESHandle<TransientTrackBuilder> theB;
@@ -356,7 +357,8 @@ void FillB(std::vector<reco::Muon> muonsel,
            const trigger::TriggerEvent &triggerEvent)
 {
   // Load trigger menu
-  const baconhep::TTrigger triggerMenu("/afs/cern.ch/user/x/xuyan/public/TriggerMenu/HLT_50nsGRun");
+  std::string cmssw_base_src = getenv("CMSSW_BASE"); cmssw_base_src+="/src/";
+  const baconhep::TTrigger triggerMenu(cmssw_base_src+"BaconAna/DataFormats/data/HLT_50nsGRun");
   
   reco::Muon m[2];
   reco::Track t[1];

@@ -91,7 +91,12 @@ NtuplerMod::NtuplerMod(const edm::ParameterSet &iConfig):
   fPVArr             (0),
   fPFParArr          (0)
 {
-  gSystem->Load("/afs/cern.ch/work/x/xuyan/work4/CMSSW_8_0_27/src/BaconProd/Ntupler/plugins/libMylib.so");
+  // Load trigger menu
+  std::string cmssw_base_src = getenv("CMSSW_BASE");
+  cmssw_base_src+="/src/";
+  cmssw_base_src+="BaconProd/Ntupler/plugins/libMylib.so";
+  const char *module = cmssw_base_src.c_str();
+  gSystem->Load(module);
   fHLTTag_token = consumes<edm::TriggerResults>(fHLTTag);
   fHLTObjTag_token = consumes<trigger::TriggerEvent>(fHLTObjTag);
   fPFCandName_token = consumes<reco::PFCandidateCollection>(fPFCandName);
