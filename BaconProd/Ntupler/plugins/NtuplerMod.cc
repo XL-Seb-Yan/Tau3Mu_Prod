@@ -91,7 +91,6 @@ NtuplerMod::NtuplerMod(const edm::ParameterSet &iConfig):
   fPVArr             (0),
   fPFParArr          (0)
 {
-  gSystem->Load("/afs/cern.ch/user/x/xuyan/public/TriggerMenu/libMylib.so");
   fHLTTag_token = consumes<edm::TriggerResults>(fHLTTag);
   fHLTObjTag_token = consumes<trigger::TriggerEvent>(fHLTObjTag);
   fPFCandName_token = consumes<reco::PFCandidateCollection>(fPFCandName);
@@ -189,13 +188,11 @@ NtuplerMod::NtuplerMod(const edm::ParameterSet &iConfig):
       fMuonNPixLayers    = new std::vector<unsigned int>(); assert(fMuonNPixLayers);
       fMuonNMatchStn     = new std::vector<unsigned int>(); assert(fMuonNMatchStn);
       fMuonTrkID         = new std::vector<int>(); assert(fMuonTrkID);
-      fMuonHltMatchBits  = new std::vector<TriggerObjects>(); assert(fMuonHltMatchBits);
       fVfTc           = new std::vector<float>(); assert(fVfTc);
       fVfDof          = new std::vector<float>(); assert(fVfDof);
       fVfNc           = new std::vector<float>(); assert(fVfNc);
       fVfProb         = new std::vector<float>(); assert(fVfProb);
       fCategory       = new std::vector<int>();   assert(fCategory);
-      fVfValid        = new std::vector<int>();   assert(fVfValid);
       fVfIp           = new std::vector<float>();   assert(fVfIp);
       fTriIso         = new std::vector<float>();   assert(fTriIso);
       fTriIsoNtrk     = new std::vector<int>();   assert(fTriIsoNtrk);
@@ -289,13 +286,11 @@ NtuplerMod::~NtuplerMod()
   delete fMuonNPixLayers;
   delete fMuonNMatchStn;
   delete fMuonTrkID;
-  delete fMuonHltMatchBits;
   delete fVfTc;
   delete fVfDof;
   delete fVfNc;
   delete fVfProb;
   delete fCategory;
-  delete fVfValid;
   delete fVfIp;
   delete fTriIso;
   delete fTriIsoNtrk;
@@ -365,13 +360,11 @@ void NtuplerMod::beginJob()
     fEventTree->Branch("MuonNPixLayers",   fMuonNPixLayers);
     fEventTree->Branch("MuonNMatchStn",   fMuonNMatchStn);
     fEventTree->Branch("MuonTrkID",   fMuonTrkID);
-    fEventTree->Branch("MuonHltMatchBits",   fMuonHltMatchBits);
     fEventTree->Branch("VfTc",   fVfTc);
     fEventTree->Branch("VfDof",   fVfDof);
     fEventTree->Branch("VfNc",   fVfNc);
     fEventTree->Branch("VfProb",   fVfProb);
     fEventTree->Branch("Category",   fCategory);
-    fEventTree->Branch("VfValid",  fVfValid);
     fEventTree->Branch("VfIp",   fVfIp);
     fEventTree->Branch("TriIso",  fTriIso);
     fEventTree->Branch("TriIsoNtrk",  fTriIsoNtrk);
@@ -499,13 +492,11 @@ void NtuplerMod::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     fMuonNPixLayers->clear();
     fMuonNMatchStn->clear();
     fMuonTrkID->clear();
-    fMuonHltMatchBits->clear();
     fVfTc->clear();
     fVfDof->clear();
     fVfNc->clear();
     fVfProb->clear();
     fCategory->clear();
-    fVfValid->clear();
     fVfIp->clear();
     fTriIso->clear();
     fTriIsoNtrk->clear();
@@ -513,7 +504,7 @@ void NtuplerMod::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     isFill = fFillerMuon->fill(fMuonPt, fMuonEta, fMuonPhi, fMuonPtErr, fMuonStaPt, fMuonStaEta, fMuonStaPhi, fMuonPfPt, fMuonPfEta, fMuonPfPhi, fMuonQ, fMuonTrkIso, fMuonEcalIso, fMuonHcalIso, fMuonChHadIso,
 		      fMuonGammaIso, fMuonNeuHadIso, fMuonPuIso, fMuonD0, fMuonDz, fMuonSip3d, fMuonTkNchi2, fMuonMuNchi2, fMuonTrkKink,
 		      fMuonGlbKink, fMuonNValidHits, fMuonTypeBits, fMuonSelectorBits, fMuonPogIDBits, fMuonNTkHits, fMuonNPixHits, fMuonNTkLayers, fMuonNPixLayers,
-			       fMuonNMatchStn, fMuonTrkID, fMuonHltMatchBits, fVfTc, fVfDof, fVfNc, fVfProb, fCategory, fVfValid, fVfIp, fTriIso, fTriIsoNtrk, fInvMass, iEvent, iSetup, *pv, fTrigger->fRecords, *hTrgEvt);
+			       fMuonNMatchStn, fMuonTrkID, fVfTc, fVfDof, fVfNc, fVfProb, fCategory, fVfIp, fTriIso, fTriIsoNtrk, fInvMass, iEvent, iSetup, *pv, fTrigger->fRecords, *hTrgEvt);
   }
 
   if(fIsActivePhoton) {

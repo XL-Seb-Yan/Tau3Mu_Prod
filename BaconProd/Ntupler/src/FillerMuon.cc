@@ -86,13 +86,11 @@ void FillA(std::vector<reco::Muon> muonsel,
            std::vector<unsigned int>   *muon_nPixLayers,
            std::vector<unsigned int>   *muon_nMatchStn,
            std::vector<int>   *muon_trkID,
-           std::vector<TriggerObjects> *muon_hltMatchBits,
            std::vector<float> *vf_tC,
            std::vector<float> *vf_dOF,
            std::vector<float> *vf_nC,
            std::vector<float> *vf_Prob,
 	   std::vector<int>   *category,
-	   std::vector<int>   *vf_Valid,
 	   std::vector<float> *vf_ip,
 	   std::vector<float> *tri_iso,
 	   std::vector<int>   *tri_isoNtrk,
@@ -128,8 +126,6 @@ void FillA(std::vector<reco::Muon> muonsel,
 	lvtau = lv1+lv2+lv3;
 	float mass_cut = (lv1+lv2+lv3).M();
 	if(mass_cut > 2.4 || mass_cut < 1.4) continue;
-	invmass->push_back(mass_cut);
-	invmass->push_back(-99); //Take the empty space for normalization channel invmass
 
 	// Build tracks
 	std::vector<reco::TransientTrack> t_trks;
@@ -143,31 +139,26 @@ void FillA(std::vector<reco::Muon> muonsel,
 	// Vertex fit
 	KalmanVertexFitter kvf;
 	TransientVertex fv = kvf.vertex(t_trks);
-	if(fv.isValid()){
-	  vf_Valid->push_back(1);
-	  vf_tC->push_back(fv.totalChiSquared());
-	  vf_dOF->push_back(fv.degreesOfFreedom());
-	  vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
-	  vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
-	  // Vertex impact parameter
-	  TVector3 fv_vector, pv_vector, tau_vector;
-	  fv_vector.SetXYZ(fv.position().x(),fv.position().y(),fv.position().z());
-	  pv_vector.SetXYZ(pv.x(),pv.y(),pv.z());
-	  tau_vector.SetXYZ(lvtau.Px(),lvtau.Py(),lvtau.Pz());
-	  float ip = (fv_vector - pv_vector).Mag() * tau_vector.Angle(fv_vector - pv_vector);
-	  vf_ip->push_back(ip);
-	}
-	else{
-	  vf_Valid->push_back(0);
-	  // Vertex Fitting info
-	  vf_tC->push_back(-99);
-	  vf_dOF->push_back(-99);
-	  vf_nC->push_back(-99);
-	  vf_Prob->push_back(-99);
-	  vf_ip->push_back(-99);
-	}
+	if(!fv.isValid()) continue;
 
 	// Store all possible triples
+	// Vertexing
+	vf_tC->push_back(fv.totalChiSquared());
+	vf_dOF->push_back(fv.degreesOfFreedom());
+	vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
+	vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
+	// Vertex impact parameter
+	TVector3 fv_vector, pv_vector, tau_vector;
+	fv_vector.SetXYZ(fv.position().x(),fv.position().y(),fv.position().z());
+	pv_vector.SetXYZ(pv.x(),pv.y(),pv.z());
+	tau_vector.SetXYZ(lvtau.Px(),lvtau.Py(),lvtau.Pz());
+	float ip = (fv_vector - pv_vector).Mag() * tau_vector.Angle(fv_vector - pv_vector);
+	vf_ip->push_back(ip);
+
+	// Invariant mass
+	invmass->push_back(mass_cut);
+	invmass->push_back(-99); //Take the empty space for normalization channel invmass
+
 	// Muon info
 	for(int i=0; i<3; i++){
 	  // Kinematics
@@ -261,7 +252,6 @@ void FillA(std::vector<reco::Muon> muonsel,
 	    }
 	  }
 	  muon_trkID->push_back(trkid);
-	  muon_hltMatchBits->push_back(TriggerTools::matchHLT(m[i].eta(), m[i].phi(), triggerRecords, triggerEvent));
 	}
 
 	// Triplet isolation for muon hypothesis only
@@ -341,13 +331,11 @@ void FillB(std::vector<reco::Muon> muonsel,
            std::vector<unsigned int>   *muon_nPixLayers,
            std::vector<unsigned int>   *muon_nMatchStn,
            std::vector<int>   *muon_trkID,
-           std::vector<TriggerObjects> *muon_hltMatchBits,
            std::vector<float> *vf_tC,
            std::vector<float> *vf_dOF,
            std::vector<float> *vf_nC,
            std::vector<float> *vf_Prob,
 	   std::vector<int>   *category,
-	   std::vector<int>   *vf_Valid,
 	   std::vector<float> *vf_ip,
 	   std::vector<float> *tri_iso,
 	   std::vector<int>   *tri_isoNtrk,
@@ -403,31 +391,25 @@ void FillB(std::vector<reco::Muon> muonsel,
 	// Vertex fit
 	KalmanVertexFitter kvf;
 	TransientVertex fv = kvf.vertex(t_trks);
-	if(fv.isValid()){
-	  vf_Valid->push_back(1);
-	  vf_tC->push_back(fv.totalChiSquared());
-	  vf_dOF->push_back(fv.degreesOfFreedom());
-	  vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
-	  vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
-	  // Vertex impact parameter, for muon hypothesis only
-	  TVector3 fv_vector, pv_vector, tau_vector;
-	  fv_vector.SetXYZ(fv.position().x(),fv.position().y(),fv.position().z());
-	  pv_vector.SetXYZ(pv.x(),pv.y(),pv.z());
-	  tau_vector.SetXYZ(lvtau.Px(),lvtau.Py(),lvtau.Pz());
-	  float ip = (fv_vector - pv_vector).Mag() * tau_vector.Angle(fv_vector - pv_vector);
-	  vf_ip->push_back(ip);
-	}
-	else{
-	  vf_Valid->push_back(0);
-	  // Vertex Fitting info
-	  vf_tC->push_back(-99);
-	  vf_dOF->push_back(-99);
-	  vf_nC->push_back(-99);
-	  vf_Prob->push_back(-99);
-	  vf_ip->push_back(-99);
-	}
-	
+	if(!fv.isValid()) continue;
+
 	// Store all possible triples
+	// Vertexing
+	vf_tC->push_back(fv.totalChiSquared());
+	vf_dOF->push_back(fv.degreesOfFreedom());
+	vf_nC->push_back(fv.totalChiSquared()/fv.degreesOfFreedom());
+	vf_Prob->push_back(TMath::Prob(fv.totalChiSquared(),(int)fv.degreesOfFreedom()));
+	// Vertex impact parameter
+	TVector3 fv_vector, pv_vector, tau_vector;
+	fv_vector.SetXYZ(fv.position().x(),fv.position().y(),fv.position().z());
+	pv_vector.SetXYZ(pv.x(),pv.y(),pv.z());
+	tau_vector.SetXYZ(lvtau.Px(),lvtau.Py(),lvtau.Pz());
+	float ip = (fv_vector - pv_vector).Mag() * tau_vector.Angle(fv_vector - pv_vector);
+	vf_ip->push_back(ip);
+
+	// Invariant mass
+	invmass->push_back(mass_cut_sig);
+	invmass->push_back(mass_cut_nor); //Take the empty space for normalization channel invmass
 	// Muon info
 	for(int i=0; i<2; i++){
 	  // Kinematics
@@ -521,7 +503,6 @@ void FillB(std::vector<reco::Muon> muonsel,
 	    }
 	  }
 	  muon_trkID->push_back(trkid);
-	  muon_hltMatchBits->push_back(TriggerTools::matchHLT(m[i].eta(), m[i].phi(), triggerRecords, triggerEvent));
 	}
 
 	// Track info
@@ -578,7 +559,6 @@ void FillB(std::vector<reco::Muon> muonsel,
 	  muon_nPixLayers->push_back(t[i].hitPattern().pixelLayersWithMeasurement()); 
 	  muon_nMatchStn->push_back(0);
 	  muon_trkID->push_back(0);
-	  muon_hltMatchBits->push_back(TriggerTools::matchHLT(t[i].eta(), t[i].phi(), triggerRecords, triggerEvent));
 	}
 	
 	// Triplet isolation for muon hypothesis only
@@ -655,13 +635,11 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
 		      std::vector<unsigned int>   *muon_nPixLayers,
 		      std::vector<unsigned int>   *muon_nMatchStn,
 		      std::vector<int>   *muon_trkID,
-		      std::vector<TriggerObjects> *muon_hltMatchBits,
 		      std::vector<float> *vf_tC,
 		      std::vector<float> *vf_dOF,
 		      std::vector<float> *vf_nC,
 		      std::vector<float> *vf_Prob,
 		      std::vector<int>   *category,
-	              std::vector<int>   *vf_Valid,
 		      std::vector<float> *vf_ip,
 		      std::vector<float> *tri_iso,
 		      std::vector<int>   *tri_isoNtrk,
@@ -694,17 +672,31 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
   iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",hTransientTrackBuilder);
   const TransientTrackBuilder *transientTrackBuilder = hTransientTrackBuilder.product();
 
+  // Load Trigger Menu
+  std::string cmssw_base_src = getenv("CMSSW_BASE");
+  cmssw_base_src+="/src/";
+  const baconhep::TTrigger triggerMenu(cmssw_base_src+"BaconAna/DataFormats/data/HLT_50nsGRun");
+
   // Muon simple selecion
   std::vector<reco::Muon> muonsel;
   for(std::vector<reco::Muon>::const_iterator itMu=muonCol->begin(); itMu!=muonCol->end(); ++itMu){
     
     // Kinematic cuts
-    if(itMu->pt() < fMinPt) continue;
-    if(abs(itMu->eta()) > 2.4) continue;
+    if(itMu->muonBestTrack()->pt() < fMinPt) continue;
+    if(abs(itMu->muonBestTrack()->eta()) > 2.4) continue;
 
     // Muon type
     if(!(itMu->type() & baconhep::EMuType::kGlobal || itMu->type() & baconhep::EMuType::kTracker))
       continue;
+
+    // Trigger Object Match
+    TriggerObjects TriObj = TriggerTools::matchHLT(itMu->muonBestTrack()->eta(),itMu->muonBestTrack()->phi(), triggerRecords, triggerEvent);
+    bool isMatchTrigger = false;
+    isMatchTrigger = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",TriObj) ||
+		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",TriObj) ||
+		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",TriObj) ||
+		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",TriObj));
+    if(!isMatchTrigger) continue;
 
     // Push to muon array
     muonsel.push_back(*itMu);
@@ -729,9 +721,19 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
     if(itTrk->pt() < fTrackMinPt) continue;
     if(abs(itTrk->eta()) > 2.4) continue;
 
+    // Trigger Object Match
+    TriggerObjects TriObj = TriggerTools::matchHLT(itTrk->eta(), itTrk->phi(), triggerRecords, triggerEvent);
+    bool isMatchTrigger = false;
+    isMatchTrigger = (triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltDoubleMu3TrkTau3muL3Filtered",TriObj) ||
+		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL1fL1sL1DoubleMuorTripleMuL1Filtered0",TriObj) ||
+		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltL2fL1sL1DoubleMuorTripleMuL1f0L2PreFiltered0",TriObj) ||
+		      triggerMenu.passObj("HLT_DoubleMu3_Trk_Tau3mu_v*","hltTau3muTkVertexFilter",TriObj));
+    if(!isMatchTrigger) continue;
+
     // Push to trk array
     trksel.push_back(*itTrk);
   }
+
 
   // There are several possible compositions of the triplets and we will discuss this one by one //
   // If we have more than 3 muons in muonsel, we can form triplets contain: A. 3 muons, B. 2muons C. 1muon and D. 0muon //
@@ -745,17 +747,17 @@ bool FillerMuon::fill(std::vector<float> *muon_pt,
     FillA(muonsel, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, tri_isoNtrk, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_ip, tri_iso, tri_isoNtrk, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
     FillB(muonsel, trksel, pfCandCol, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, tri_isoNtrk, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_ip, tri_iso, tri_isoNtrk, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
   }
   if(muonsel.size() == 2){
     FillB(muonsel, trksel, pfCandCol, trackCol, muon_pt, muon_eta, muon_phi, muon_ptErr, muon_staPt, muon_staEta, muon_staPhi, muon_pfPt, muon_pfEta, muon_pfPhi, muon_q,
 	  muon_trkIso, muon_ecalIso, muon_hcalIso, muon_chHadIso, muon_gammaIso, muon_neuHadIso, muon_puIso, muon_d0, muon_dz, muon_sip3d,
 	  muon_tkNchi2, muon_muNchi2, muon_trkKink, muon_glbKink, muon_nValidHits, muon_typeBits, muon_selectorBits, muon_pogIDBits, muon_nTkHits,
-	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, muon_hltMatchBits, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_Valid, vf_ip, tri_iso, tri_isoNtrk, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
+	  muon_nPixHits, muon_nTkLayers, muon_nPixLayers, muon_nMatchStn, muon_trkID, vf_tC, vf_dOF, vf_nC, vf_Prob, category, vf_ip, tri_iso, tri_isoNtrk, invmass, iEvent, iSetup, pv, triggerRecords, triggerEvent);
   }
    // End of events processing //
 

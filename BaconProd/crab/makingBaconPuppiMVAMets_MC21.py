@@ -79,11 +79,11 @@ for line in hlt_file.readlines():
     process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
     process.source = cms.Source("PoolSource",
                                   fileNames = cms.untracked.vstring(
-                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/045DCD5C-5CF7-E711-8838-02163E01341E.root',
-                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/047B66C1-F2FE-E711-A7FA-008CFAC9405C.root',
-                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/062A73CA-D5FA-E711-BCAB-02163E01A714.root',
-                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0A1F8DF9-70FF-E711-A750-A4BF0112BE02.root',
-                                    '/store/mc/RunIISummer16DR80Premix/DsToTau_To3Mu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0A8250FE-DBFA-E711-B148-02163E01A675.root'
+                                    'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16DR80Premix/DsToPhiPi_ToMuMu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/00639150-3BFA-E711-9924-02163E012A15.root',
+                                    'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16DR80Premix/DsToPhiPi_ToMuMu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/00E36043-8DF7-E711-A22A-02163E01A2E1.root',
+                                    'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16DR80Premix/DsToPhiPi_ToMuMu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/0412B652-A0F7-E711-8F18-02163E01A5C4.root',
+                                    'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16DR80Premix/DsToPhiPi_ToMuMu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/04639657-63F9-E711-9B01-02163E0146D8.root',
+                                    'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16DR80Premix/DsToPhiPi_ToMuMu_MuFilter_TuneCUEP8M1_13TeV-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/04650162-52F7-E711-82BB-02163E0134B3.root'
                                   )
                                 )
     process.source.inputCommands = cms.untracked.vstring("keep *",
@@ -99,7 +99,7 @@ is_data_flag = False
 do_hlt_filter = False
 process.ntupler = cms.EDAnalyzer('NtuplerMod',
                                  skipOnHLTFail = cms.untracked.bool(do_hlt_filter),
-                                 outputName    = cms.untracked.string('OutputStest.root'),
+                                 outputName    = cms.untracked.string('OutputN1.root'),
                                  TriggerFile   = cms.untracked.string(hlt_filename),
                                  edmPVName     = cms.untracked.string('offlinePrimaryVertices'),
                                  edmPFCandName = cms.untracked.string('particleFlow'),
